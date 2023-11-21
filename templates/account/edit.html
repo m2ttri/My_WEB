@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_messages %}
+
+{% block title %}
+	Edit profile
+{% endblock %}
+
+{% block content %}
+    <section>
+        <div class="container rounded">
+            <div class="row">
+                <div class="col-md-3 border-light">
+                    <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                        {% if request.user.profile.photo %}
+                            <img id="preview" class="rounded-circle mt-5" width="150px"
+                                 src="{{ request.user.profile.photo.url }}">
+                        {% else %}
+                            <img id="preview" class="rounded-circle mt-5" width="150px"
+                                 src="{% static 'images/no_image.jpg' %}">
+                        {% endif %}
+                        <span class="font-weight-bold">{{ request.user.username }}</span>
+                        <span class="text-white-50">{{ request.user.email }}</span>
+                        <span> </span>
+                    </div>
+                </div>
+                <div class="col-md-5 border-dark">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="text-right">Edit profile</h4>
+                        </div>
+                        <form action="{% url 'edit' %}" method="post" class="form" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% bootstrap_form user_form show_help=False %}
+                            {% bootstrap_form profile_form %}
+                            {% bootstrap_button "Save" button_type="submit" %}
+                        </form>
+                        <p></p>
+                        <a href="{% url 'password_change' %}" class="text-primary-50 fw-bold">Change password</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
