@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from album.models import Album
+from images.models import Album
 
 
 def index(request):
