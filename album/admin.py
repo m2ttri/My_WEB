@@ -4,12 +4,11 @@ from .models import Album, Image
 
 @admin.register(Album)
 class AlbumAdmin(admin.ModelAdmin):
-    list_display = ['title', 'author', 'publish', 'status']
-    list_filter = ['publish', 'status']
-    prepopulated_fields = {'slug': ('title',)}
+    list_display = ['title', 'author', 'update', 'status', 'publish']
+    list_filter = ['update', 'status']
     raw_id_fields = ['author']
-    date_hierarchy = 'publish'
-    ordering = ['-status', '-publish']
+    date_hierarchy = 'update'
+    ordering = ['-status', '-update']
 
 
 @admin.register(Image)

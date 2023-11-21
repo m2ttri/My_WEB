@@ -1,20 +1,54 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
 
 {% block title %}
-	LIST
+	Album list
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>ALBUM LIST</h1>
-                {% for album in albums %}
-                    <div class="item">
-                        <a href="{% url 'album:album_detail' album.id %}">{{ album.title }}</a>
+    <div class="album">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                <h1>My albums</h1>
+                    <div style="display: flex; flex-wrap: wrap;">
+                        {% for album in posts %}
+                            <div style="flex: 0 0 30%; margin: 1em; text-align: center;">
+                                <div class="card shadow-sm">
+                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         role="img" aria-label="Placeholder: Thumbnail"
+                                         preserveAspectRatio="xMidYMid slice"
+                                         focusable="false">
+                                            <image href="{% static 'images/no_image.jpg' %}"
+                                                   x="0" y="25" height="225" width="100%">
+                                            </image>
+                                    </svg>
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p class="card-text">{{ album.title }}</p>
+                                            <p class="card-text text-muted">{{ album.get_status_display }}</p>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div class="btn-group">
+                                                <a class="btn btn-sm btn-outline-primary"
+                                                   href="{% url 'album:album_detail' album.id %}" role="button">View
+                                                </a>
+                                                <a class="btn btn-sm btn-outline-secondary"
+                                                   href="{% url 'album:album_edit' album.id %}" role="button">Edit
+                                                </a>
+                                            </div>
+                                            <small class="text-muted">upd {{ album.update }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
     </div>
+    {% include 'pagination.html' with page=posts %}
 {% endblock %}

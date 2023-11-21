@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 	Main page
@@ -13,7 +14,7 @@
                 <p class="lead text-muted">Съешь ещё этих мягких французских булок да выпей чаю</p>
                 {% if request.user.is_authenticated %}
                     <p>
-                        <a href="#" class="btn btn-primary my-2">Create</a>
+                        <a href="{% url 'album:album_create' %}" class="btn btn-primary my-2">Create album</a>
                         <a href="{% url 'album:album_list' %}" class="btn btn-secondary my-2">My Albums</a>
                     </p>
                 {% else %}
@@ -25,20 +26,21 @@
             </div>
         </div>
     </section>
-    <div class="album py-5">
+    <div class="album">
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <h1>LATEST ALBUMS</h1>
                     <div style="display: flex; flex-wrap: wrap;">
-                        {% for album in albums %}
+                        {% for album in posts %}
                             <div style="flex: 0 0 30%; margin: 1em; text-align: center;">
                                 <div class="card shadow-sm">
                                     <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
-                                         xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
-                                         preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title>
-{#                                        <rect width="100%" height="100%" fill="#55595c"></rect>#}
-{#                                        <text x="50%" y="50%" fill="#eceeef" dy=".3em">{{ album.title }}</text>#}
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         role="img" aria-label="Placeholder: Thumbnail"
+                                         preserveAspectRatio="xMidYMid slice"
+                                         focusable="false">
+                                            <image href="{% static 'images/no_image.jpg' %}"
+                                                   x="0" y="25" height="225" width="100%"></image>
                                     </svg>
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
@@ -47,8 +49,12 @@
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">
                                             <div class="btn-group">
-                                                <a class="btn btn-sm btn-outline-primary" href="{% url 'album:album_detail' album.id %}" role="button">View</a>
-                                                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+                                                <a class="btn btn-sm btn-outline-primary"
+                                                   href="{% url 'album:album_detail' album.id %}" role="button">View
+                                                </a>
+                                                <a class="btn btn-sm btn-outline-secondary"
+                                                   href="{% url 'album:album_edit' album.id %}" role="button">Edit
+                                                </a>
                                             </div>
                                             <small class="text-muted">{{ album.publish }}</small>
                                         </div>
@@ -61,4 +67,5 @@
             </div>
         </div>
     </div>
+    {% include 'pagination.html' with page=posts %}
 {% endblock %}

@@ -1,32 +1,28 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-from django.urls import reverse
 
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=Album.Status.PUBLISHED)
+        return super().get_queryset().filter(status=Album.Status.PUBLIC)
 
 
 class Album(models.Model):
 
     class Status(models.TextChoices):
-        DRAFT = 'DF', 'Draft'
-        PUBLISHED = 'PB', 'Published'
+        PRIVATE = 'PR', 'Private'
+        PUBLIC = 'PB', 'Public'
 
     author = models.ForeignKey(settings.AUTH_USER_MODEL,
-                               related_name='album_created',
+                               related_name='album',
                                on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200, unique=True)
+    title = models.CharField(max_length=50)
     publish = models.DateTimeField(default=timezone.now)
-    users_like = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                        related_name='album_liked',
-                                        blank=True)
+    update = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2,
                               choices=Status.choices,
-                              default=Status.DRAFT)
+                              default=Status.PUBLIC)
     objects = models.Manager()
     published = PublishedManager()
 
@@ -39,10 +35,6 @@ class Album(models.Model):
     def __str__(self):
         return self.title
 
-    def get_absolute_url(self):
-        return reverse('album:album_list',
-                       args=[self.slug])
-
 
 class Image(models.Model):
     album = models.ForeignKey(Album,
@@ -51,7 +43,3 @@ class Image(models.Model):
     image = models.ImageField(upload_to='images/',
                               blank=True)
     add = models.DateTimeField(auto_now_add=True)
-
-    def get_absolute_url(self):
-        return reverse('album:album_detail',
-                       args=[self.id])

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+	Create album
+{% endblock %}
+
+{% block content %}
+    <section>
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body p-5 text-center">
+                            <div class="mb-md-5 mt-md-4 pb-5">
+                                <h2 class="fw-bold mb-2 text-uppercase">Create album</h2>
+                                <p class="text-white-50 mb-5">Use the following form to create album</p>
+                                <form action="{% url 'album:album_create' %}" method="post" class="form">
+                                    {% csrf_token %}
+                                    {% bootstrap_form form %}
+                                    {% bootstrap_form image %}
+                                    {% bootstrap_button "Create" button_type="submit" %}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
