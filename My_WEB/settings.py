@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bootstrap5',
     'social_django',
+    'album.apps.AlbumConfig',
     'django_extensions',
-    'images.apps.ImagesConfig',
     'django_cleanup',
 ]
 
