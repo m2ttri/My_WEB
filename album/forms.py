@@ -5,7 +5,7 @@ from .models import Album, Image
 class AlbumForm(forms.ModelForm):
     class Meta:
         model = Album
-        fields = ('title', 'status')
+        fields = ['title', 'status']
 
     def clean_title(self):
         data = self.cleaned_data['title']
@@ -18,7 +18,7 @@ class ImageForm(forms.ModelForm):
 
     class Meta:
         model = Image
-        fields = ('image',)
+        fields = ['image']
 
 
 class AlbumEditForm(forms.ModelForm):

@@ -1,17 +1,39 @@
 {% extends 'base.html' %}
 
 {% block title %}
-	DETAILS
+	Album details
 {% endblock %}
 
 {% block content %}
-	<div class="container">
+    <div class="container">
         <div class="row">
             <div class="col">
-                <h1>{{ album.title }}</h1>
-                {% for image in album.images.all %}
-                	<img src="{{ image.image.url }}" alt="">
-                {% endfor %}
+                <div class="tm-img-gallery gallery-one">
+                    <div class="tm-img-gallery-info-container">
+                        <h2 class="tm-text-title tm-gallery-title tm-white">
+                            <span class="tm-white">{{ album.title }}</span>
+                        </h2>
+                        <br>
+                        <p class="tm-textx">Author: {{ album.author }}</p>
+                        <p class="tm-text">Updated: {{ album.update }}</p>
+                        <p class="tm-text">{{ album.get_status_display }}</p>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap;">
+                       {% for image in album.images.all %}
+                           <div style="flex: 0 0 14%; margin: 1em; text-align: center;">
+                                <div class="grid-item">
+                                    <figure class="effect-bubba">
+                                        <figcaption>
+                                            <a href="{{ image.image.url }}" target="_blank">
+                                                <img src="{{ image.image.url }}" alt="Image" class="img-fluid tm-img">
+                                            </a>
+                                        </figcaption>
+                                    </figure>
+                                </div>
+                           </div>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
     </div>

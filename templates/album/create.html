@@ -18,7 +18,6 @@
                                 <form action="{% url 'album:album_create' %}" method="post" class="form">
                                     {% csrf_token %}
                                     {% bootstrap_form form %}
-                                    {% bootstrap_form image %}
                                     {% bootstrap_button "Create" button_type="submit" %}
                                 </form>
                             </div>

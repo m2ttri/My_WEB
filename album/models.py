@@ -22,14 +22,14 @@ class Album(models.Model):
     update = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2,
                               choices=Status.choices,
-                              default=Status.PUBLIC)
+                              default=Status.PRIVATE)
     objects = models.Manager()
     published = PublishedManager()
 
     class Meta:
-        ordering = ['-publish']
+        ordering = ['title']
         indexes = [
-            models.Index(fields=['-publish']),
+            models.Index(fields=['title']),
         ]
 
     def __str__(self):

@@ -6,8 +6,8 @@ from .models import Album, Image
 class AlbumAdmin(admin.ModelAdmin):
     list_display = ['title', 'author', 'update', 'status', 'publish']
     list_filter = ['update', 'status']
+    search_fields = ['author__username', 'title']
     raw_id_fields = ['author']
-    date_hierarchy = 'update'
     ordering = ['-status', '-update']
 
 
