@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+	Add images
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'album:album_add_images' album.id %}" method="post" class="form" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% bootstrap_form form show_help=False %}
+        {% bootstrap_button "Add" button_type="submit" %}
+    </form>
+{% endblock %}

@@ -1,6 +1,9 @@
 {% load django_bootstrap5 %}
+<<<<<<< Updated upstream
 {% bootstrap_messages %}
 {% load static %}
+=======
+>>>>>>> Stashed changes
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
 <head>
@@ -65,11 +68,21 @@
     </style>
  </head>
 <body>
+<<<<<<< Updated upstream
     <header class="p-3 text-bg-dark">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-activity" viewBox="0 0 16 16">
+=======
+
+    <header class="p-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+
+                <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-warning text-decoration-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-activity" viewBox="0 0 16 16">
+>>>>>>> Stashed changes
                         <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2Z"></path>
                     </svg>
                 </a>
@@ -88,8 +101,21 @@
 
                 <div class="text-end">
                     {% if request.user.is_authenticated %}
+<<<<<<< Updated upstream
                     	<a class="btn btn-outline-light me-2" href="{% url 'edit' %}" role="button">Edit profile</a>
                         <a class="btn btn-warning" href="{% url 'logout' %}" role="button">Logout</a>
+=======
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-warning dropdown-toggle"
+                                    data-bs-toggle="dropdown" aria-expanded="false">{{ request.user.username }}
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'edit' %}">Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                            </ul>
+                        </div>
+>>>>>>> Stashed changes
                     {% else %}
                         <a class="btn btn-outline-light me-2" href="{% url 'login' %}" role="button">Login</a>
                         <a class="btn btn-warning" href="{% url 'register' %}" role="button">Sign up</a>
@@ -98,12 +124,20 @@
             </div>
         </div>
     </header>
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     <main>
         <div id="content">
             {% block content %}
             {% endblock %}
         </div>
     </main>
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     <footer class="text-muted py-3 my-4 border-top pb-3 mb-3">
         <div class="container">
             <p class="float-end mb-1"><a href="#">Back to top</a></p>
@@ -112,5 +146,50 @@
     </footer>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="https://kit.fontawesome.com/f97db90111.js" crossorigin="anonymous"></script>
+<<<<<<< Updated upstream
+=======
+    <script>
+        function adjustHeightOfPage(pageNo) {
+            const pageType = $('div[data-page-no="' + pageNo + '"]').data("page-type");
+        }
+
+        $(window).load(function(){
+            adjustHeightOfPage(1);
+            $('.gallery-one').magnificPopup({
+                delegate: 'a',
+                type: 'image',
+                gallery:{enabled:true},
+                callbacks: {
+                    open: function () {
+                        $('.redirect-button').on('click', function (e)
+                        {
+                            e.stopPropagation();
+
+                            window.location.href = $(this).data('url');
+                        });
+                    },
+                    close: function () {
+                        $('.redirect-button').off('click');
+                    }
+                }
+            });
+        });
+
+        {#$(document).ready(function (){#}
+        {#    const addButton =#}
+        {#        $('<button/>', {#}
+        {#            text: 'Add image',#}
+        {#            id: 'addImage',#}
+        {#            class: 'btn btn-primary',#}
+        {#            click: function () {#}
+        {#                window.location.href = $('#addImage').attr('href');#}
+        {#            }#}
+        {#        });#}
+        {#    $('#addButton').append(addButton);#}
+        {#});#}
+        {##}
+    </script>
+
+>>>>>>> Stashed changes
 </body>
 </html>

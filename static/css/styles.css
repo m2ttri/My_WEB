@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 .icon-list {
   padding-left: 0;
   list-style: none;
@@ -56,4 +57,19 @@
     color: #fff;
     cursor: pointer;
     border: solid 1px #BA68C8
+=======
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    position: relative;
+    width: 100%;
+>>>>>>> Stashed changes
 }

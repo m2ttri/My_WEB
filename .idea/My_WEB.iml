@@ -18,11 +18,21 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+<<<<<<< Updated upstream
     <orderEntry type="library" name="bootstrap" level="application" />
     <orderEntry type="library" name="f97db90111" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="f97db90111" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
+=======
+    <orderEntry type="library" name="js.cookie" level="application" />
+    <orderEntry type="library" name="bootstrap" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="f97db90111" level="application" />
+    <orderEntry type="library" name="tether" level="application" />
+    <orderEntry type="library" name="jquery" level="application" />
+    <orderEntry type="library" name="@popperjs" level="application" />
+>>>>>>> Stashed changes
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />
