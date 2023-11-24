@@ -7,7 +7,11 @@
 
 {% block content %}
     <section>
+<<<<<<< Updated upstream
         <div class="container py-5 h-100 border border-bottom-0 border-top-0 border-secondary-subtle">
+=======
+        <div class="container py-5">
+>>>>>>> Stashed changes
             <div class="row d-flex justify-content-center align-items-center">
                 <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                     <div class="card bg-dark text-white" style="border-radius: 1rem;">
@@ -21,6 +25,7 @@
                                     {% bootstrap_button "Submit" button_type="submit" %}
                                 </form>
                                 <p></p>
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
                                 <p class="small mb-5 pb-lg-2">
                                     <a class="text-white-50" href="{% url 'password_reset' %}">Forgot password?</a>
@@ -46,6 +51,19 @@
                                     </a>
                                     <a href="{% url 'social:begin' 'google-oauth2' %}" class="text-danger">
 >>>>>>> Stashed changes
+=======
+                                <p class="small mb-5 pb-lg-2 py-2">
+                                    <a class="text-warning" href="{% url 'password_reset' %}">Forgot password?</a>
+                                </p>
+                                <div class="d-flex justify-content-sm-evenly text-center">
+                                    <a href="{% url 'social:begin' 'facebook' %}" class="text-primary">
+                                        <i class="fab fa-facebook-f fa-lg"></i>
+                                    </a>
+                                    <a href="{% url 'social:begin' 'twitter' %}" class="text-white-50">
+                                        <i class="fa-brands fa-x-twitter"></i>
+                                    </a>
+                                    <a href="{% url 'social:begin' 'google-oauth2' %}" class="text-danger">
+>>>>>>> Stashed changes
                                         <i class="fab fa-google fa-lg"></i>
                                     </a>
                                 </div>
@@ -56,6 +74,9 @@
 =======
                             <p class="mb-1">Don't have account?
                                 <a href="{% url 'register' %}" class="text-primary fw-bold">Sign Up</a>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
                             </p>
                         </div>
