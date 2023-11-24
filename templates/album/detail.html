@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 
 {% block title %}
 	Album details
@@ -17,20 +18,30 @@
                         <p class="tm-textx">Author: {{ album.author }}</p>
                         <p class="tm-text">Updated: {{ album.update }}</p>
                         <p class="tm-text">{{ album.get_status_display }}</p>
+                        <p class="tm-text">{{ request.user }}</p>
+                        {% if request.user == album.author %}
+                            <form action="{% url 'album:album_detail' album.id %}" method="post" class="form" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% bootstrap_form add_image_form %}
+                                {% bootstrap_button "Add" button_type="submit" %}
+                            </form>
+                        {% endif %}
                     </div>
                     <div style="display: flex; flex-wrap: wrap;">
                        {% for image in album.images.all %}
-                           <div style="flex: 0 0 14%; margin: 1em; text-align: center;">
-                                <div class="grid-item">
-                                    <figure class="effect-bubba">
-                                        <figcaption>
-                                            <a href="{{ image.image.url }}" target="_blank">
-                                                <img src="{{ image.image.url }}" alt="Image" class="img-fluid tm-img">
-                                            </a>
-                                        </figcaption>
-                                    </figure>
-                                </div>
-                           </div>
+                           {% if image.image %}
+                               <div style="flex: 0 0 14%; margin: 1em; text-align: center;">
+                                    <div class="grid-item">
+                                        <figure class="effect-bubba">
+                                            <figcaption class="img">
+                                                <a href="{{ image.image.url }}">
+                                                    <img src="{{ image.image.url }}" alt="Image" class="img-fluid tm-img">
+                                                </a>
+                                            </figcaption>
+                                        </figure>
+                                    </div>
+                               </div>
+                           {% endif %}
                         {% endfor %}
                     </div>
                 </div>

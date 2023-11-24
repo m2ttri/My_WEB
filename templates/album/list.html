@@ -11,17 +11,28 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                <h1>My albums</h1>
+                    <h1>My albums</h1>
                     <div style="display: flex; flex-wrap: wrap;">
                         {% for album in posts %}
                             <div style="flex: 0 0 30%; margin: 1em; text-align: center;">
                                 <div class="card shadow-sm">
-                                    <svg class="bd-placeholder-img card-img-top" width="100%" height="225"
-                                         xmlns="http://www.w3.org/2000/svg">
-                                        <image href="{% static 'images/no_image.jpg' %}"
-                                               x="0" y="25" height="225" width="100%">
-                                        </image>
-                                    </svg>
+                                    {% if album.images.all|first %}
+                                        {% with first_image=album.images.all|first %}
+                                            <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
+                                                <img src="{{ first_image.image.url }}" width="100%" alt="">
+                                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
+                                                    View album
+                                                </div>
+                                            </a>
+                                        {% endwith %}
+                                    {% else %}
+                                        <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
+                                            <img src="{% static 'images/no_image.jpg' %}" width="100%" alt="">
+                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
+                                                View album
+                                            </div>
+                                        </a>
+                                    {% endif %}
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <p class="card-text">{{ album.title }}</p>

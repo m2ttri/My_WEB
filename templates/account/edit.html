@@ -9,26 +9,29 @@
 
 {% block content %}
     <section>
-        <div class="container rounded">
+        <div class="container py-5">
             <div class="row">
-                <div class="col-md-3 border-light">
+                <div class="col-md-4">
                     <div class="d-flex flex-column align-items-center text-center p-3 py-5">
                         {% if request.user.profile.photo %}
-                            <img id="preview" class="rounded-circle mt-5" width="150px"
-                                 src="{{ request.user.profile.photo.url }}">
+                            <img id="preview" class="rounded-circle mt-5" width="200px"
+                                 src="{{ request.user.profile.photo.url }}" alt="ava">
                         {% else %}
-                            <img id="preview" class="rounded-circle mt-5" width="150px"
-                                 src="{% static 'images/no_image.jpg' %}">
+                            <img id="preview" class="rounded-circle mt-5" width="200px"
+                                 src="{% static 'images/no_image.jpg' %}" alt="ava">
                         {% endif %}
+                        <br>
                         <span class="font-weight-bold">{{ request.user.username }}</span>
                         <span class="text-white-50">{{ request.user.email }}</span>
-                        <span> </span>
                     </div>
                 </div>
                 <div class="col-md-5 border-dark">
                     <div class="p-3 py-5">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="text-right">Edit profile</h4>
+                            <a class="btn btn-outline-primary" href="{% url 'password_change' %}" role="button">
+                                <i class="fa-solid fa-right-long"></i>
+                            </a>
                         </div>
                         <form action="{% url 'edit' %}" method="post" class="form" enctype="multipart/form-data">
                             {% csrf_token %}
@@ -36,8 +39,6 @@
                             {% bootstrap_form profile_form %}
                             {% bootstrap_button "Save" button_type="submit" %}
                         </form>
-                        <p></p>
-                        <a href="{% url 'password_change' %}" class="text-primary-50 fw-bold">Change password</a>
                     </div>
                 </div>
             </div>
