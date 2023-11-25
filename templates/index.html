@@ -6,21 +6,13 @@
 {% endblock %}
 
 {% block content %}
-     <section class="text-center container">
+     <section class="text-center container py-3">
         <div class="row">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">Something title</h1>
-                {% if request.user.is_authenticated %}
-                    <p>
-                        <a href="{% url 'album:album_create' %}" class="btn btn-primary my-2">Create</a>
-                        <a href="{% url 'album:album_list' %}" class="btn btn-secondary my-2">My Albums</a>
-                    </p>
-                {% else %}
-                    <p>
-                        <a href="{% url 'login' %}" class="btn btn-primary my-2">Create</a>
-                        <a href="{% url 'login' %}" class="btn btn-secondary my-2">My Albums</a>
-                    </p>
-                {% endif %}
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+                </form>
+                <h1 class="fw-light">Welcome</h1>
             </div>
         </div>
     </section>
@@ -32,7 +24,6 @@
                         {% for album in posts %}
                             <div style="flex: 0 0 30%; margin: 1em; text-align: center;">
                                 <div class="card shadow-sm">
-                                {% if album.images.all|first %}
                                     {% with first_image=album.images.all|first %}
                                         <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
                                             <img src="{{ first_image.image.url }}" width="100%" alt="">
@@ -41,14 +32,6 @@
                                             </div>
                                         </a>
                                     {% endwith %}
-                                {% else %}
-                                    <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
-                                        <img src="{% static 'images/no_image.jpg' %}" width="100%" alt="">
-                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
-                                            View album
-                                        </div>
-                                    </a>
-                                {% endif %}
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-center">
                                             <p class="card-text">{{ album.title }}</p>
@@ -58,7 +41,7 @@
                                             {% if request.user == album.author %}
                                                 <div class="btn-group">
                                                     <a class="btn btn-sm btn-outline-danger"
-                                                       href="{% url 'album:album_edit' album.id %}" role="button">Delete
+                                                       href="{% url 'album:album_delete' album.id %}" role="button">Delete
                                                     </a>
                                                     <a class="btn btn-sm btn-outline-warning"
                                                        href="{% url 'album:album_edit' album.id %}" role="button">Edit

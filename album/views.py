@@ -1,4 +1,5 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.views.generic.edit import DeleteView
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .models import Album
@@ -37,16 +38,22 @@ def album_list(request):
 def create_album(request):
     if request.method == 'POST':
         form = AlbumForm(request.POST)
-        if form.is_valid():
+        image_form = ImageForm(request.POST,
+                               request.FILES)
+        if form.is_valid() and image_form.is_valid():
             album = form.save(commit=False)
             album.author = request.user
             album.save()
+            images = image_form.save(commit=False)
+            images.album = album
+            images.save()
             return redirect('album:album_detail', album.id)
     else:
         form = AlbumForm()
+        image_form = ImageForm()
     return render(request,
                   'album/create.html',
-                  {'form': form})
+                  {'form': form, 'images_form': image_form})
 
 
 @login_required
@@ -66,19 +73,10 @@ def edit_album(request, id):
                   {'form': form, 'album': album})
 
 
-# @login_required
-# def add_images(request, id):
-#     album = get_object_or_404(Album, id=id)
-#     if request.method == 'POST':
-#         form = ImageForm(request.POST,
-#                          request.FILES)
-#         if form.is_valid():
-#             images = form.save(commit=False)
-#             images.album = album
-#             images.save()
-#             return redirect('album:album_detail', album.id)
-#     else:
-#         form = ImageForm()
-#     return render(request,
-#                   'album/add_images_form.html',
-#                   {'form': form, 'album': album})
+class AlbumDeleteView(DeleteView):
+    model = Album
+    template_name = 'album/album_delete.html'
+
+    def get_success_url(self):
+        return reverse('album:album_list')
+

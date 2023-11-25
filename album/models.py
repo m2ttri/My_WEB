@@ -22,7 +22,7 @@ class Album(models.Model):
     update = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2,
                               choices=Status.choices,
-                              default=Status.PRIVATE)
+                              default=Status.PUBLIC)
     objects = models.Manager()
     published = PublishedManager()
 
@@ -40,6 +40,5 @@ class Image(models.Model):
     album = models.ForeignKey(Album,
                               related_name='images',
                               on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='images/',
-                              blank=True)
+    image = models.ImageField(upload_to='images/')
     add = models.DateTimeField(auto_now_add=True)

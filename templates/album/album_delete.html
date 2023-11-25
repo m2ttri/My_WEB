@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load django_bootstrap5 %}
 
 {% block title %}
-	Create album
-{% endblock %}
+    Delete album
+{% endblock title %}
 
 {% block content %}
     <section>
@@ -13,13 +13,13 @@
                     <div class="card bg-dark text-white" style="border-radius: 1rem;">
                         <div class="card-body p-5 text-center">
                             <div class="mb-md-5 mt-md-4 pb-5">
-                                <h2 class="fw-bold mb-2 text-uppercase">Create album</h2>
-                                <p class="text-white-50 mb-5">Use the following form to create album</p>
-                                <form action="{% url 'album:album_create' %}" method="post" enctype="multipart/form-data" class="form">
+                                <h2 class="fw-bold mb-2 text-uppercase">Delete album</h2>
+                                <p class="text-white-50 mb-5">Are you want to delete the album
+                                    <a href=
+                                </p>
+                                <form action="{% url 'album:album_delete' album.id %}" method="post" class="form">
                                     {% csrf_token %}
-                                    {% bootstrap_form form %}
-                                    {% bootstrap_form images_form %}
-                                    {% bootstrap_button "Create" button_type="submit" %}
+                                    {% bootstrap_button "Delete" button_type="submit" button_class="btn-danger" %}
                                 </form>
                             </div>
                         </div>
@@ -29,3 +29,4 @@
         </div>
     </section>
 {% endblock %}
+
