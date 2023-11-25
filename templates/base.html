@@ -35,9 +35,8 @@
                            target="_blank">ADMIN</a>
                     </li>
                 </ul>
-
-                <div class="text-end">
-                    {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated %}
+                    <div class="text-end">
                         <a href="{% url 'album:album_create' %}" class="btn btn-primary my-2">New Album</a>
                         <a href="{% url 'album:album_list' %}" class="btn btn-secondary my-2">My Albums</a>
                         <div class="btn-group">
@@ -50,11 +49,11 @@
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                             </ul>
                         </div>
-                    {% else %}
+                {% else %}
                         <a class="btn btn-outline-light me-2" href="{% url 'login' %}" role="button">Login</a>
                         <a class="btn btn-outline-warning" href="{% url 'register' %}" role="button">Sign up</a>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
 
             </div>
         </div>

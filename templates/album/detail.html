@@ -30,7 +30,7 @@
                     <div style="display: flex; flex-wrap: wrap;">
                        {% for image in album.images.all %}
                            {% if image.image %}
-                               <div style="flex: 0 0 14%; margin: 1em; text-align: center;">
+                               <div style="flex: 0 0 14%; margin: 1em; text-align: center; border: #6f42c1">
                                     <div class="grid-item">
                                         <figure class="effect-bubba">
                                             <figcaption class="img">
@@ -48,4 +48,5 @@
             </div>
         </div>
     </div>
+    {% include 'pagination.html' with page=album.images.all %}
 {% endblock %}
