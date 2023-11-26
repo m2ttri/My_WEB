@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'album.apps.AlbumConfig',
     'django_extensions',
     'django_cleanup',
+    'easy_thumbnails',
 ]
 
 

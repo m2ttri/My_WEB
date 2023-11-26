@@ -28,16 +28,6 @@
                                             <p class="card-text">{{ album.author }}</p>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">
-{#                                            {% if request.user == album.author %}#}
-{#                                                <div class="btn-group">#}
-{#                                                    <a class="btn btn-sm btn-outline-danger"#}
-{#                                                       href="{% url 'album:album_delete' album.id %}" role="button">Delete#}
-{#                                                    </a>#}
-{#                                                    <a class="btn btn-sm btn-outline-warning"#}
-{#                                                       href="{% url 'album:album_edit' album.id %}" role="button">Edit#}
-{#                                                    </a>#}
-{#                                                </div>#}
-{#                                            {% endif %}#}
                                             <small class="text-muted">{{ album.publish }}</small>
                                         </div>
                                     </div>

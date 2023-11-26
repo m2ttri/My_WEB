@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+{% load thumbnail %}
 
 {% block title %}
 	Album details
@@ -30,15 +31,25 @@
                     <div style="display: flex; flex-wrap: wrap;">
                        {% for image in album.images.all %}
                            {% if image.image %}
-                               <div style="flex: 0 0 14%; margin: 1em; text-align: center; border: #6f42c1">
-                                    <div class="grid-item">
-                                        <figure class="effect-bubba">
-                                            <figcaption class="img">
-                                                <a href="{{ image.image.url }}">
-                                                    <img src="{{ image.image.url }}" alt="Image" class="img-fluid tm-img">
-                                                </a>
-                                            </figcaption>
-                                        </figure>
+                               <div style="flex: 0 0 14%; margin: 1em; text-align: center; border: 1px solid #6f42c1; position: relative;">
+                                    <a href="{{ image.image.url }}">
+                                        <img src="{% thumbnail image.image 300x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
+                                    </a>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <form action="{% url 'album:image_download' image.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" href="{% url 'album:image_download' image.id %}" class="text-primary-emphasis" style="background: none; border: none; font-size: 25px" title="Download image">
+                                                <i class="fa-solid fa-circle-down"></i>
+                                            </button>
+                                        </form>
+                                        {% if request.user == album.author %}
+                                            <form action="{% url 'album:image_delete' image.id %}" method="post">
+                                                {% csrf_token %}
+                                                <button type="submit" href="{% url 'album:image_delete' image.id %}" class="text-danger-emphasis" style="background: none; border: none; font-size: 25px" title="Delete image">
+                                                    <i class="fa-solid fa-circle-xmark"></i>
+                                                </button>
+                                            </form>
+                                        {% endif %}
                                     </div>
                                </div>
                            {% endif %}
