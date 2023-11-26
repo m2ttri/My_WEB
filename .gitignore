@@ -7,6 +7,5 @@ db.sqlite3
 cert.crt
 cert.key
 /media
-.vscode
-.isort.cfg
-.mypy.ini
+/.idea
+.pylintrc
