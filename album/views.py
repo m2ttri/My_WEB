@@ -46,7 +46,7 @@ def album_detail(request, id):
 @login_required
 def album_list(request):
     albums = Album.objects.filter(author=request.user)
-    paginator = Paginator(albums, 6)
+    paginator = Paginator(albums, 8)
     page_number = request.GET.get('page', 1)
     posts = paginator.page(page_number)
     return render(request,

@@ -16,6 +16,7 @@
                                 <h2 class="fw-bold mb-2 text-uppercase">Delete album</h2>
                                 <p class="text-white-50 mb-5">Are you want to delete the album
                                     <a href="{% url 'album:album_detail' album.id %}" class="fw-bold">{{ album.title }}</a>
+                                    ?
                                 </p>
                                 <form action="{% url 'album:album_delete' album.id %}" method="post" class="form">
                                     {% csrf_token %}

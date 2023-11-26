@@ -7,16 +7,6 @@
 {% endblock %}
 
 {% block content %}
-    <section class="text-center container py-3">
-        <div class="row">
-            <div class="col-lg-6 col-md-8 mx-auto">
-                <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
-                </form>
-                <h1 class="fw-light">Albums list</h1>
-            </div>
-        </div>
-    </section>
     <div class="album">
         <div class="container">
             <div class="row">
@@ -49,11 +39,11 @@
                                         <div class="d-flex justify-content-between align-items-center">
                                             {% if request.user == album.author %}
                                                 <div class="btn-group">
-                                                    <a class="btn btn-sm btn-outline-danger"
-                                                    href="{% url 'album:album_delete' album.id %}" role="button">Delete
+                                                    <a class="btn btn-sm btn-primary"
+                                                        href="{% url 'album:album_edit' album.id %}" role="button">Edit
                                                     </a>
-                                                    <a class="btn btn-sm btn-outline-warning"
-                                                    href="{% url 'album:album_edit' album.id %}" role="button">Edit
+                                                    <a class="btn btn-sm btn-outline-danger"
+                                                        href="{% url 'album:album_delete' album.id %}" role="button">Delete
                                                     </a>
                                                 </div>
                                             {% endif %}

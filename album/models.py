@@ -27,9 +27,9 @@ class Album(models.Model):
     published = PublishedManager()
 
     class Meta:
-        ordering = ['title']
+        ordering = ['-update']
         indexes = [
-            models.Index(fields=['title']),
+            models.Index(fields=['-update']),
         ]
 
     def __str__(self):

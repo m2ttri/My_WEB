@@ -1,6 +1,5 @@
 {% load static %}
 {% load django_bootstrap5 %}
-{% bootstrap_messages %}
 <!doctype html>
 <html lang="en" data-bs-theme="dark">
 <head>
@@ -15,7 +14,6 @@
  </head>
 
 <body>
-
     <header class="p-3">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -28,22 +26,25 @@
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-4 text-warning">HOME</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">section #1</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">section #2</a></li>
-                    <li><a href="#" class="nav-link px-2 text-white">section #3</a></li>
+                    <li><a class="btn btn-danger me-2 px-4 fw-bold" href="#" role="button">new post</a></li>
                     <li><a href="https://mysite.com:8000/admin/" class="nav-link px-4 text-secondary"
                            target="_blank">ADMIN</a>
                     </li>
                 </ul>
+
+                <form class="col-12 col-lg-3 mb-3 mb-lg-0 me-lg-3" role="search">
+                    <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+                </form>
+
                 {% if request.user.is_authenticated %}
                     <div class="text-end">
-                        <a href="{% url 'album:album_create' %}" class="btn btn-primary my-2">New Album</a>
-                        <a href="{% url 'album:album_list' %}" class="btn btn-secondary my-2">My Albums</a>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-outline-warning dropdown-toggle"
+                            <a class="btn btn-primary me-2" href="{% url 'album:album_create' %}" role="button">Create album</a>
+                            <button type="button" class="btn btn-outline-light dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-expanded="false">{{ request.user.username }}
                             </button>
                             <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'album:album_list' %}">My albums</a></li>
                                 <li><a class="dropdown-item" href="{% url 'edit' %}">Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
@@ -104,6 +105,5 @@
             });
         });
     </script>
-
 </body>
 </html>
