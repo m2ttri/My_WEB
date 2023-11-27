@@ -43,6 +43,3 @@ class Image(models.Model):
                               on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/')
     add = models.DateTimeField(auto_now_add=True)
-
-    def get_absolute_url(self):
-        return reverse('album:image_details', args=[self.id])

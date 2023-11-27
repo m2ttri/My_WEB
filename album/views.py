@@ -7,11 +7,6 @@ from .forms import AlbumForm, AlbumEditForm, MultipleImageForm
 from django.http import FileResponse
 
 
-def image_detail(request, image_id):
-    image = get_object_or_404(Image, id=image_id)
-    return render(request, 'album/image_detail.html', {'image': image})
-
-
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
     if request.method == "POST":

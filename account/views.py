@@ -1,7 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
+from django.views.generic import DetailView
 from .models import Profile
+
+
+class UserProfileDetailVIew(DetailView):
+    model = Profile
+    template_name = 'account/user_profile.html'
+    context_object_name = 'profile'
+    slug_field = 'user_id'
+    slug_url_kwarg = 'user_id'
 
 
 def register(request):

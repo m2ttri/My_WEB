@@ -25,10 +25,13 @@
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between">
                                             <p class="card-text">{{ album.title }}</p>
-                                            <p class="card-text">{{ album.author }}</p>
+                                            <a href="{% url 'user_profile' album.author.id %}">{{ album.author }}</a>
                                         </div>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <small class="text-muted">{{ album.publish }}</small>
+                                            <small class="text-muted">{{ album.publish|date:"F d, Y" }}</small>
+                                            <div class="btn-group">
+
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

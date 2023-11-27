@@ -10,10 +10,10 @@
     <div class="album">
         <div class="container">
             <div class="row">
-                <div class="col">
-                    <div style="display: flex; flex-wrap: wrap;">
+                <div class="col-sm-12">
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center">
                         {% for album in posts %}
-                            <div style="flex: 0 0 30%; margin: 1em; text-align: center;">
+                            <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
                                 <div class="card shadow-sm">
                                     {% with first_image=album.images.all|first %}
                                         <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
@@ -24,7 +24,7 @@
                                         </a>
                                     {% endwith %}
                                     <div class="card-body">
-                                        <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex justify-content-between">
                                             <p class="card-text">{{ album.title }}</p>
                                             {%  if album.get_status_display == 'Private' %}
                                                 <p class="card-text text-danger-emphasis">
@@ -47,7 +47,7 @@
                                                     </a>
                                                 </div>
                                             {% endif %}
-                                            <small class="text-muted">upd {{ album.update }}</small>
+                                            <small class="text-muted">{{ album.update|date:"F d, Y" }}</small>
                                         </div>
                                     </div>
                                 </div>
