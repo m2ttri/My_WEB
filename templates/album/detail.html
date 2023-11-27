@@ -15,7 +15,6 @@
                         <h2 class="tm-text-title tm-gallery-title tm-white">
                             <span class="tm-white">{{ album.title }}</span>
                         </h2>
-                        <br>
                         <p class="tm-textx">Author: {{ album.author }}</p>
                         <p class="tm-text">Updated: {{ album.update }}</p>
                         <p class="tm-text">{{ album.get_status_display }}</p>
@@ -28,31 +27,60 @@
                             </form>
                         {% endif %}
                     </div>
-                    <div style="display: flex; flex-wrap: wrap;">
-                       {% for image in album.images.all %}
-                           {% if image.image %}
-                               <div style="flex: 0 0 14%; margin: 1em; text-align: center; border: 1px solid #6f42c1; position: relative;">
-                                    <a href="{{ image.image.url }}">
-                                        <img src="{% thumbnail image.image 300x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
-                                    </a>
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <form action="{% url 'album:image_download' image.id %}" method="post">
-                                            {% csrf_token %}
-                                            <button type="submit" href="{% url 'album:image_download' image.id %}" class="text-primary-emphasis" style="background: none; border: none; font-size: 25px" title="Download image">
-                                                <i class="fa-solid fa-circle-down"></i>
-                                            </button>
-                                        </form>
-                                        {% if request.user == album.author %}
-                                            <form action="{% url 'album:image_delete' image.id %}" method="post">
-                                                {% csrf_token %}
-                                                <button type="submit" href="{% url 'album:image_delete' image.id %}" class="text-danger-emphasis" style="background: none; border: none; font-size: 25px" title="Delete image">
-                                                    <i class="fa-solid fa-circle-xmark"></i>
-                                                </button>
-                                            </form>
-                                        {% endif %}
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center">
+                        {% for image in album.images.all %}
+                            {% if image.image %}
+                                <div style="margin: 1em; text-align: center; border: 1px solid #6f42c1; position: relative;">
+                                    <div class="grid-item">
+                                        <figure class="effect-bubba">
+                                            <figcaption class="img">
+                                                <a href="{{ image.image.url }}">
+                                                    <img src="{% thumbnail image.image 200x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
+                                                </a>
+                                                <div style="display: flex; justify-content: end;">
+                                                    {{ image.get_absolute_url }}
+                                                    <div class="text-end">
+                                                        <div class="btn-group">
+                                                            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
+                                                                <i class="fa-solid fa-ellipsis"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <form action="{% url 'album:image_details' image.id %}" method="post">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" href="{% url 'album:image_details' image.id %}" class="dropdown-item text-light-emphasis" style="background: none; border: none; font-size: 15px">
+                                                                            <i class="fa-solid fa-link" style="margin-right: 12px"></i>Copy link
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                                <li>
+                                                                    <form action="{% url 'album:image_download' image.id %}" method="post">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" href="{% url 'album:image_download' image.id %}" class="dropdown-item text-light-emphasis" style="background: none; border: none; font-size: 15px">
+                                                                            <i class="fa-solid fa-circle-down" style="margin-right: 15px"></i>Download
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                                {% if request.user == album.author %}
+                                                                    <li><hr class="dropdown-divider"></li>
+                                                                    <li>
+                                                                        <form action="{% url 'album:image_delete' image.id %}" method="post">
+                                                                            {% csrf_token %}
+                                                                            <button type="submit" href="{% url 'album:image_delete' image.id %}" class="dropdown-item text-danger-emphasis" style="background: none; border: none; font-size: 15px">
+                                                                                <i class="fa-solid fa-circle-xmark" style="margin-right: 15px"></i>Delete
+                                                                            </button>
+                                                                        </form>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </figcaption>
+                                        </figure>
                                     </div>
-                               </div>
-                           {% endif %}
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

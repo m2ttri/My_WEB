@@ -27,19 +27,21 @@
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-4 text-warning">HOME</a></li>
                     <li><a class="btn btn-danger me-2 px-4 fw-bold" href="#" role="button">new post</a></li>
-                    <li><a href="https://mysite.com:8000/admin/" class="nav-link px-4 text-secondary"
-                           target="_blank">ADMIN</a>
-                    </li>
                 </ul>
 
-                <form class="col-12 col-lg-3 mb-3 mb-lg-0 me-lg-3" role="search">
-                    <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
-                </form>
+                <div class="d-flex flex-grow-1 justify-content-center">
+                    <form class="col-12 col-lg-5 mb-3 mb-lg-0 position-relative mx-auto" role="search">
+                        <input type="search" class="form-control form-control-dark text-bg-dark pl-5" placeholder="Search..." aria-label="Search">
+                            <i class="fa-solid fa-magnifying-glass position-absolute top-50 end-0 translate-middle-y p-2"></i>
+                    </form>
+                </div>
 
                 {% if request.user.is_authenticated %}
                     <div class="text-end">
                         <div class="btn-group">
-                            <a class="btn btn-primary me-2" href="{% url 'album:album_create' %}" role="button">Create album</a>
+                            <a class="btn btn-primary me-2" href="{% url 'album:album_create' %}"
+                               role="button">Create album
+                            </a>
                             <button type="button" class="btn btn-outline-light dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-expanded="false">{{ request.user.username }}
                             </button>
@@ -48,6 +50,12 @@
                                 <li><a class="dropdown-item" href="{% url 'edit' %}">Settings</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+                                {% if request.user.is_staff %}
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-warning-emphasis" href="{% url 'admin:index' %}"
+                                           target="_blank">ADMIN</a>
+                                    </li>
+                                {% endif %}
                             </ul>
                         </div>
                 {% else %}
