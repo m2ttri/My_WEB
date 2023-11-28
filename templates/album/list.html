@@ -58,5 +58,7 @@
             </div>
         </div>
     </div>
-    {% include 'pagination.html' with page=posts %}
+    {% if posts.has_other_pages %}
+        {% include 'pagination.html' with page=posts %}
+    {% endif %}
 {% endblock %}

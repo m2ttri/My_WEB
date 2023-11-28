@@ -1,16 +1,28 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
-from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
-from django.views.generic import DetailView
+from django.core.paginator import Paginator
+from album.models import Album
 from .models import Profile
+from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
 
 
-class UserProfileDetailVIew(DetailView):
-    model = Profile
-    template_name = 'account/user_profile.html'
-    context_object_name = 'profile'
-    slug_field = 'user_id'
-    slug_url_kwarg = 'user_id'
+def user_albums(request, user_id):
+    profile = Profile.objects.get(user__id=user_id)
+    albums = Album.published.filter(author=profile.user).all()
+    paginator = Paginator(albums, 8)
+    page_number = request.GET.get("page", 1)
+    posts = paginator.page(page_number)
+    context = {'posts': posts, 'profile': profile}
+    return render(request, 'account/user_profile.html', context)
+
+
+# from django.views.generic import DetailView
+# class UserProfileDetailVIew(DetailView):
+#     model = Profile
+#     template_name = 'account/user_profile.html'
+#     context_object_name = 'profile'
+#     slug_field = 'user_id'
+#     slug_url_kwarg = 'user_id'
 
 
 def register(request):

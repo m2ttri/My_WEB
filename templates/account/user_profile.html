@@ -1,5 +1,79 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 	PROFILE
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<div class="d-flex align-items-center" style="padding-left: 82px;">
+			<div class="p-2">
+				{% if profile.photo %}
+				<img id="preview" class="rounded-circle py-5" width="200px"
+					src="{{ profile.photo.url }}" alt="ava">
+				{% else %}
+					<img id="preview" class="rounded-circle py-5" width="200px"
+						src="{% static 'images/no_image.jpg' %}" alt="ava">
+				{% endif %}	
+			</div>
+			<div class="p-5">
+				<h1 class="text-warning">{{ profile }}</h1>
+			</div>
+		</div>
+	</div>
+	<div class="album">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center">
+                        {% for album in posts %}
+                            <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
+                                <div class="card shadow-sm">
+                                    {% with first_image=album.images.all|first %}
+                                        <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
+                                            <img src="{{ first_image.image.url }}" width="100%" alt="">
+                                            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
+                                                View album
+                                            </div>
+                                        </a>
+                                    {% endwith %}
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <p class="card-text">{{ album.title }}</p>
+                                            {%  if album.get_status_display == 'Private' %}
+                                                <p class="card-text text-danger-emphasis">
+                                                    {{ album.get_status_display }}
+                                                </p>
+                                            {% else %}
+                                                <p class="card-text text-success-emphasis">
+                                                    {{ album.get_status_display }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            {% if request.user == album.author %}
+                                                <div class="btn-group">
+                                                    <a class="btn btn-sm btn-primary"
+                                                        href="{% url 'album:album_edit' album.id %}" role="button">Edit
+                                                    </a>
+                                                    <a class="btn btn-sm btn-outline-danger"
+                                                        href="{% url 'album:album_delete' album.id %}" role="button">Delete
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                            <small class="text-muted">{{ album.update|date:"F d, Y" }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	{% if posts.has_other_pages %}
+		{% include 'pagination.html' with page=posts %}
+	{% endif %}
 {% endblock %}

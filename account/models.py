@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 class Profile(models.Model):
@@ -8,6 +8,7 @@ class Profile(models.Model):
                                 on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='users/',
                               blank=True)
+    created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'Profile of {self.user.username}'
+        return self.user.username

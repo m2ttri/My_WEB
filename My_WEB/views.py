@@ -1,6 +1,6 @@
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from album.models import Album
-from django.core.paginator import Paginator
 
 
 def index(request):

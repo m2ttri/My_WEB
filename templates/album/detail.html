@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
-{% load django_bootstrap5 %}
 {% load thumbnail %}
+{% load django_bootstrap5 %}
 
 {% block title %}
 	Album details
@@ -12,13 +12,18 @@
             <div class="col">
                 <div class="tm-img-gallery gallery-one">
                     <div class="tm-img-gallery-info-container">
-                        <h2 class="tm-text-title tm-gallery-title tm-white">
-                            <span class="tm-white">{{ album.title }}</span>
-                        </h2>
-                        <p class="tm-textx">Author: {{ album.author }}</p>
-                        <p class="tm-text">Updated: {{ album.update }}</p>
-                        <p class="tm-text">{{ album.get_status_display }}</p>
-                        <p class="tm-text">{{ request.user }}</p>
+                        <h2 class="tm-text-title tm-gallery-title tm-white">{{ album.title }}</h2>
+                        <form action="{% url 'user_albums' album.author.id %}">
+                            {% csrf_token %}
+                            <button type="submit" href="{% url 'user_albums' album.author.id %}">
+                                <div>
+                                    <i class="fa-solid fa-diamond-turn-right"></i>
+                                    {{ album.author.username }}
+                                </div>
+                            </button>
+                        </form>
+                        <h6 class="tm-text">Updated: {{ album.update }}</h6>
+                        <h6 class="tm-text">{{ album.get_status_display }}</h6>
                         {% if request.user == album.author %}
                             <form action="{% url 'album:album_detail' album.id %}" method="post" class="form" enctype="multipart/form-data">
                                 {% csrf_token %}

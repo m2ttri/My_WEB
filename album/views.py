@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.views.generic.edit import DeleteView
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import DeleteView
 from django.core.paginator import Paginator
+from django.http import FileResponse
 from .models import Album, Image
 from .forms import AlbumForm, AlbumEditForm, MultipleImageForm
-from django.http import FileResponse
 
 
 def album_detail(request, id):
