@@ -16,10 +16,8 @@
                         <form action="{% url 'user_albums' album.author.id %}">
                             {% csrf_token %}
                             <button type="submit" href="{% url 'user_albums' album.author.id %}">
-                                <div>
-                                    <i class="fa-solid fa-diamond-turn-right"></i>
-                                    {{ album.author.username }}
-                                </div>
+                                <i class="fa-solid fa-diamond-turn-right"></i>
+                                {{ album.author.username }}
                             </button>
                         </form>
                         <h6 class="tm-text">upd {{ album.update }}</h6>

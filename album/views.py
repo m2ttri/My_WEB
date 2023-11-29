@@ -4,26 +4,9 @@ from django.views.decorators.http import require_POST
 from django.views.generic.edit import DeleteView
 from django.core.paginator import Paginator
 from django.http import FileResponse, JsonResponse
+from django.contrib.postgres.search import TrigramSimilarity
+from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm
 from .models import Album, Image
-from .forms import AlbumForm, AlbumEditForm, MultipleImageForm
-
-
-@login_required
-@require_POST
-def album_like(request):
-    album_id = request.POST.get('id')
-    action = request.POST.get('action')
-    if album_id and action:
-        try:
-            album = Album.objects.get(id=album_id)
-            if action == 'like':
-                album.users_like.add(request.user)
-            else:
-                album.users_like.remove(request.user)
-            return JsonResponse({'status': 'ok'})
-        except Image.DoesNotExist:
-            pass
-    return JsonResponse({'status': 'error'})
 
 
 def album_detail(request, id):
@@ -46,21 +29,22 @@ def album_detail(request, id):
                   {"album": album, "add_image_form": add_image_form})
 
 
-# @require_POST
-# def album_comment(request, id):
-#     album = get_object_or_404(Album,
-#                               id=id,
-#                               status=Album.Status.PUBLIC)
-#     comment = None
-#     form = CommentForm(data=request.POST)
-#     if form.is_valid():
-#         comment = form.save(commit=False)
-#         comment.album = album
-#         comment.save()
-#     return render(request, 'album/detail.html',
-#                   {'album': album,
-#                    'form': form,
-#                    'comment': comment})
+@login_required
+@require_POST
+def album_like(request):
+    album_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if album_id and action:
+        try:
+            album = Album.objects.get(id=album_id)
+            if action == 'like':
+                album.users_like.add(request.user)
+            else:
+                album.users_like.remove(request.user)
+            return JsonResponse({'status': 'ok'})
+        except Image.DoesNotExist:
+            pass
+    return JsonResponse({'status': 'error'})
 
 
 @login_required()
@@ -115,16 +99,40 @@ def album_list(request):
                   {"posts": posts})
 
 
+def album_search(request):
+    form = SearchForm()
+    query = None
+    results = []
+    if 'query' in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data['query']
+            results = Album.published.annotate(
+                similarity=TrigramSimilarity('title', query), ).filter(
+                similarity__gt=0.1).order_by('-similarity')
+            return render(request,
+                          'album/search.html',
+                          {'form': form, 'query': query, 'results': results})
+    return render(request,
+                  'base.html',
+                  {'form': form, 'query': query, 'results': results})
+
+
 def download_image(request, image_id):
     img = Image.objects.get(id=image_id)
-    response = FileResponse(open(img.image.path, 'rb'),
-                            as_attachment=True)
+    response = FileResponse(open(img.image.path, 'rb'), as_attachment=True)
     return response
 
 
 class AlbumDeleteView(DeleteView):
     model = Album
     template_name = "album/album_delete.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        album = self.get_object()
+        if album.author != request.user:
+            return redirect('/')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
         return reverse("album:album_list")
@@ -136,6 +144,23 @@ class ImageDeleteView(DeleteView):
     def get_success_url(self):
         return reverse('album:album_detail',
                        kwargs={'id': self.object.album.id})
+
+
+# @require_POST
+# def album_comment(request, id):
+#     album = get_object_or_404(Album,
+#                               id=id,
+#                               status=Album.Status.PUBLIC)
+#     comment = None
+#     form = CommentForm(data=request.POST)
+#     if form.is_valid():
+#         comment = form.save(commit=False)
+#         comment.album = album
+#         comment.save()
+#     return render(request, 'album/detail.html',
+#                   {'album': album,
+#                    'form': form,
+#                    'comment': comment})
     
 
 # @login_required

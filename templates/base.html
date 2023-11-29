@@ -16,7 +16,7 @@
 <body>
     <header class="p-3">
         <div class="container">
-            <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            <div class="d-flex flex-wrap align-items-center">
 
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-warning text-decoration-none">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-activity" viewBox="0 0 16 16">
@@ -26,20 +26,38 @@
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-4 text-warning">HOME</a></li>
-                    <li><a class="btn btn-danger me-2 px-4 fw-bold" href="{% url 'album:album_create' %}" role="button">new album</a></li>
+                    <li><a href="{% url 'album:album_list' %}" class="nav-link px-2 text-white">Dashboard</a></li>
                 </ul>
 
-                <form class="col-lg-3 position-relative mx-2" role="search">
-                    <input type="search" class="form-control form-control-dark text-bg-dark pl-5" placeholder="Search..." aria-label="Search">
-                        <i class="fa-solid fa-magnifying-glass position-absolute top-50 end-0 translate-middle-y p-2"></i>
-                </form>
+                <div class="me-1">
+                    <form action="{% url 'album:album_search' %}" method="get" class="form input-group">
+                        {{ form.query }}
+                        <input type="submit" value="Search" style="width: 100px">
+                    </form>
+                </div>
+
+{#                    <form action="{% url 'album:album_search' %}" method="get" class="d-flex">#}
+{#                        <input class="form-control me-1" type="search" placeholder="Search" aria-label="Search">#}
+{#                        <button class="btn btn-primary" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>#}
+{#                    </form>#}
+
+{#                        <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />#}
+{#                        <button type="submit" class="btn btn-outline-secondary" data-mdb-ripple-init>#}
+{#                            <i class="fa-solid fa-magnifying-glass"></i>#}
+{#                        </button>#}
+
+{#                    <div class="col-5">#}
+{#                        <form action="{% url 'album:album_search' %}" method="get" class="form position-relative mx-2 d-flex" role="search">#}
+{#                            {% bootstrap_form form show_label=False layout='inline'  %}#}
+{#                            <input type="submit" value="Search" class="btn btn-primary">#}
+{#                        </form>#}
+{#                    </div>#}
 
                 <div class="text-end">
                     <div class="btn-group">
-                        {{ request.user }}
                         {% if request.user.is_authenticated %}
-                            {% comment %} <a class="btn btn-secondary me-2" href="{% url 'user_albums' album.author.id %}"role="button">my albums</a> {% endcomment %}
-                            <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <a class="btn btn-secondary me-2 px-4 fw-bold" href="{% url 'album:album_create' %}" role="button">new album</a>
+                            <button type="button" class="btn btn-warning dropdown-toggle fw-semibold" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ request.user.username }}
                             </button>
                             <ul class="dropdown-menu">
@@ -48,7 +66,7 @@
                                 <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
                                 {% if request.user.is_staff %}
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item text-warning-emphasis" href="{% url 'admin:index' %}"target="_blank">ADMIN</a></li>
+                                    <li><a class="dropdown-item text-warning-emphasis" href="{% url 'admin:index' %}" target="_blank">ADMIN</a></li>
                                 {% endif %}
                             </ul>
                         {% else %}
@@ -61,8 +79,6 @@
             </div>
         </div>
     </header>
-    
-
 
     <main>
         <div id="content">
