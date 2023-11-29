@@ -3,7 +3,7 @@ from .views import AlbumDeleteView, ImageDeleteView
 from . import views
 
 
-app_name = 'album'
+APP_NAME = 'album'
 
 urlpatterns = [
     path('', views.album_list, name='album_list'),
@@ -13,4 +13,7 @@ urlpatterns = [
     path('album/<int:pk>/delete/', AlbumDeleteView.as_view(), name='album_delete'),
     path('image/<int:pk>/delete/', ImageDeleteView.as_view(), name='image_delete'),
     path('image/<int:image_id>/download', views.download_image, name='image_download'),
+    path('like/', views.album_like, name='like'),
+
+    # path('<int:id>/comment/', views.album_comment, name='album_comment'),
 ]

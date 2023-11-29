@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_cleanup',
     'easy_thumbnails',
+    'django.contrib.postgres',
 ]
 
 
@@ -84,8 +85,10 @@ WSGI_APPLICATION = 'My_WEB.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'album',
+        'USER': 'album',
+        'PASSWORD': 'q225588q'
     }
 }
 

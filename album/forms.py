@@ -1,6 +1,6 @@
-from django import forms
-from .models import Album, Image
 from django.forms import ClearableFileInput, FileField
+from django import forms
+from .models import Album, Image, Comment
 
 
 class AlbumForm(forms.ModelForm):
@@ -16,10 +16,15 @@ class AlbumForm(forms.ModelForm):
 
 
 class ImageForm(forms.ModelForm):
-
     class Meta:
         model = Image
         fields = ['image']
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['body']
 
 
 class AlbumEditForm(forms.ModelForm):
@@ -49,3 +54,7 @@ class MultipleFileField(FileField):
 
 class MultipleImageForm(forms.Form):
     images = MultipleFileField(widget=MultipleFileInput(attrs={'multiple': True}))
+
+
+class SearchForm(forms.Form):
+    query = forms.CharField()

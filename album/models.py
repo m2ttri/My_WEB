@@ -23,6 +23,9 @@ class Album(models.Model):
     status = models.CharField(max_length=2,
                               choices=Status.choices,
                               default=Status.PUBLIC)
+    users_like = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                        related_name='albums_liked',
+                                        blank=True)
     objects = models.Manager()
     published = PublishedManager()
 
@@ -42,3 +45,20 @@ class Image(models.Model):
                               on_delete=models.CASCADE)
     image = models.ImageField(upload_to='images/')
     add = models.DateTimeField(auto_now_add=True)
+
+
+class Comment(models.Model):
+    album = models.ForeignKey(Album,
+                              on_delete=models.CASCADE,
+                              related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                               related_name='comments',
+                               on_delete=models.CASCADE)
+    body = models.TextField()
+    update = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-update']
+        indexes = [
+            models.Index(fields=['-update']),
+        ]

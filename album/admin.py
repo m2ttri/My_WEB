@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Album, Image
+from .models import Album, Image, Comment
 
 
 @admin.register(Album)
@@ -16,3 +16,10 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ['album', 'image', 'add']
     list_filter = ['add']
     ordering = ['-add']
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['album', 'user', 'update']
+    list_filter = ['update']
+    search_fields = ['album', 'user', 'body']

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}
+    COMMENT
+{% endblock %}
+
+{% block content %}
+    {% if comment %}
+        Added
+        <a href="{% url "album:album_detail" album.id %}">back</a>
+    {% else %}
+        {% include "album/includes/comment_form.html" %}
+    {% endif %}
+{% endblock %}

@@ -29,15 +29,16 @@
                     <li><a class="btn btn-danger me-2 px-4 fw-bold" href="{% url 'album:album_create' %}" role="button">new album</a></li>
                 </ul>
 
-                {% comment %} <form class="col-12 col-lg-6 mb-3 mb-lg-0 position-relative mx-auto" role="search">
+                <form class="col-lg-3 position-relative mx-2" role="search">
                     <input type="search" class="form-control form-control-dark text-bg-dark pl-5" placeholder="Search..." aria-label="Search">
                         <i class="fa-solid fa-magnifying-glass position-absolute top-50 end-0 translate-middle-y p-2"></i>
-                </form> {% endcomment %}
+                </form>
 
                 <div class="text-end">
                     <div class="btn-group">
+                        {{ request.user }}
                         {% if request.user.is_authenticated %}
-                            <a class="btn btn-secondary me-2" href="{% url 'album:album_list' %}"role="button">my albums</a>
+                            {% comment %} <a class="btn btn-secondary me-2" href="{% url 'user_albums' album.author.id %}"role="button">my albums</a> {% endcomment %}
                             <button type="button" class="btn btn-warning dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 {{ request.user.username }}
                             </button>
@@ -60,6 +61,8 @@
             </div>
         </div>
     </header>
+    
+
 
     <main>
         <div id="content">
@@ -107,6 +110,14 @@
                 }
             });
         });
+    </script>
+    <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <script>
+        const csrftoken = Cookies.get('csrftoken');
+        document.addEventListener('DOMContentLoaded', (event) => {
+            {% block domready %}
+            {% endblock %}
+        })
     </script>
 </body>
 </html>

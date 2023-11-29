@@ -16,15 +16,6 @@ def user_albums(request, user_id):
     return render(request, 'account/user_profile.html', context)
 
 
-# from django.views.generic import DetailView
-# class UserProfileDetailVIew(DetailView):
-#     model = Profile
-#     template_name = 'account/user_profile.html'
-#     context_object_name = 'profile'
-#     slug_field = 'user_id'
-#     slug_url_kwarg = 'user_id'
-
-
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
