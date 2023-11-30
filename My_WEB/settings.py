@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from django.urls import reverse_lazy
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
     'django_cleanup',
     'easy_thumbnails',
     'django.contrib.postgres',
+    'actions.apps.ActionsConfig',
 ]
 
 
@@ -184,3 +187,8 @@ SOCIAL_AUTH_PIPELINE = [
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 ]
+
+
+ABSOLUTE_URL_OVERRIDES = {
+    'auth_user': lambda u: reverse_lazy('user_detail', args=[u.username])
+}

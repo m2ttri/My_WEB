@@ -26,12 +26,15 @@
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-4 text-warning">HOME</a></li>
-                    <li><a href="{% url 'album:album_list' %}" class="nav-link px-2 text-white">Dashboard</a></li>
+                    {% if request.user.is_authenticated %}
+                        <li><a href="{% url 'user_detail' request.user.username %}" class="nav-link px-2 text-white">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'album:album_list' %}" class="nav-link px-2 text-secondary">album_list</a></li>
                 </ul>
 
                 <div class="me-1">
                     <form action="{% url 'album:album_search' %}" method="get" class="form input-group">
-                        {{ form.query }}
+                        {{ search_form.query }}
                         <input type="submit" value="Search" style="width: 100px">
                     </form>
                 </div>
@@ -94,7 +97,7 @@
             </p>
             <p class="text-muted">&copy; 2023 Company, Inc</p>
         </div>
-    </footer>  
+    </footer>
 
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'js/jquery-1.11.3.min.js' %}"></script>

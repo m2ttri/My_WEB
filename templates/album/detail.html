@@ -13,9 +13,9 @@
                 <div class="tm-img-gallery gallery-one">
                     <div class="tm-img-gallery-info-container">
                         <h2 class="tm-text-title tm-gallery-title tm-white">{{ album.title }}</h2>
-                        <form action="{% url 'user_albums' album.author.id %}">
+                        <form action="{% url 'user_detail' album.author %}">
                             {% csrf_token %}
-                            <button type="submit" href="{% url 'user_albums' album.author.id %}">
+                            <button type="submit" href="{% url 'user_detail' album.author %}">
                                 <i class="fa-solid fa-diamond-turn-right"></i>
                                 {{ album.author.username }}
                             </button>
@@ -29,21 +29,23 @@
                             </form>
                         {% endif %}
                         <p></p>
-                        {% with total_likes=album.users_like.count users_like=album.users_like.all %}
-                            <button data-id="{{ album.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="btn btn-outline-danger like button">
-                                {% if request.user not in users_like %}
-                                    {% comment %} <i class="fa-solid fa-heart"></i>LIKE {% endcomment %}
-                                    like
-                                {% else %}
-                                    {% comment %} <i class="fa-solid fa-heart-crack"></i>UNLIKE {% endcomment %}
-                                    unlike
-                                {% endif %}
-                            </button>
-                            <span class="count">
-                                <span class="total">{{ total_likes }}</span>
-                                like{{ total_likes|pluralize }}
-                            </span>
-                        {% endwith %}
+                        {% if request.user.is_authenticated %}
+                            {% with total_likes=album.users_like.count users_like=album.users_like.all %}
+                                <button data-id="{{ album.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="btn btn-outline-danger like button">
+                                    {% if request.user not in users_like %}
+                                        {% comment %} <i class="fa-solid fa-heart"></i>LIKE {% endcomment %}
+                                        like
+                                    {% else %}
+                                        {% comment %} <i class="fa-solid fa-heart-crack"></i>UNLIKE {% endcomment %}
+                                        unlike
+                                    {% endif %}
+                                </button>
+                                <span class="count">
+                                    <span class="total">{{ total_likes }}</span>
+                                    like{{ total_likes|pluralize }}
+                                </span>
+                            {% endwith %}
+                        {% endif %}
                     </div>
                     <div style="display: flex; flex-wrap: wrap; justify-content: center">
                         {% for image in album.images.all %}
@@ -106,6 +108,7 @@
         headers: {'X-CSRFToken': csrftoken},
         mode: 'same-origin'
     }
+
     document.querySelector('button.like').addEventListener('click', function(e){
         e.preventDefault();
         var likeButton = this;
