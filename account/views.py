@@ -3,11 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-# from actions.utils import create_action
 from album.models import Album
-# from actions.models import Action
 from .models import Profile, Contact
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
+
+
+# from actions.utils import create_action
+# from actions.models import Action
 
 
 def user_detail(request, username):
@@ -19,17 +21,6 @@ def user_detail(request, username):
     return render(request,
                   'account/user_profile.html',
                   {'user': user, 'albums_all': albums_all, 'albums_pub': albums_pub})
-
-
-# from django.core.paginator import Paginator
-# def user_albums(request, user_id):
-#     profile = Profile.objects.get(user__id=user_id)
-#     albums = Album.published.filter(author=profile.user).all()
-#     paginator = Paginator(albums, 8)
-#     page_number = request.GET.get("page", 1)
-#     posts = paginator.page(page_number)
-#     context = {'posts': posts, 'profile': profile}
-#     return render(request, 'account/user_profile.html', context)
 
 
 def register(request):
@@ -81,7 +72,6 @@ def user_follow(request):
             if action == 'follow':
                 Contact.objects.get_or_create(user_from=request.user,
                                               user_to=user)
-                # create_action(request.user, 'is following', user)
             else:
                 Contact.objects.filter(user_from=request.user,
                                        user_to=user).delete()
@@ -100,3 +90,13 @@ def user_follow(request):
 #     return render(request,
 #                   'account/user_profile.html',
 #                   {'actions': actions})
+
+# from django.core.paginator import Paginator
+# def user_albums(request, user_id):
+#     profile = Profile.objects.get(user__id=user_id)
+#     albums = Album.published.filter(author=profile.user).all()
+#     paginator = Paginator(albums, 8)
+#     page_number = request.GET.get("page", 1)
+#     posts = paginator.page(page_number)
+#     context = {'posts': posts, 'profile': profile}
+#     return render(request, 'account/user_profile.html', context)

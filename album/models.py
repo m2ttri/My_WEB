@@ -52,8 +52,8 @@ class Comment(models.Model):
                               on_delete=models.CASCADE,
                               related_name='comments')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                               related_name='comments',
-                               on_delete=models.CASCADE)
+                             related_name='comments',
+                             on_delete=models.CASCADE)
     body = models.TextField()
     update = models.DateTimeField(auto_now=True)
 

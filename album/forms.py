@@ -8,11 +8,11 @@ class AlbumForm(forms.ModelForm):
         model = Album
         fields = ['title', 'status']
 
-    def clean_title(self):
-        data = self.cleaned_data['title']
-        if Album.objects.filter(title=data).exists():
-            raise forms.ValidationError('Title already in use')
-        return data
+    # def clean_title(self):
+    #     data = self.cleaned_data['title']
+    #     if Album.objects.filter(title=data).exists():
+    #         raise forms.ValidationError('Title already in use')
+    #     return data
 
 
 class ImageForm(forms.ModelForm):
@@ -45,8 +45,7 @@ class MultipleFileField(FileField):
     def clean(self, data, initial=None):
         single_file_clean = super().clean
         if isinstance(data, (list, tuple)):
-            result = [single_file_clean(d, initial)
-                      for d in data]
+            result = [single_file_clean(d, initial) for d in data]
         else:
             result = single_file_clean(data, initial)
         return result
@@ -57,4 +56,5 @@ class MultipleImageForm(forms.Form):
 
 
 class SearchForm(forms.Form):
-    query = forms.CharField()
+    query = forms.CharField(label='',
+                            widget=forms.TextInput(attrs={'placeholder': 'Search'}))

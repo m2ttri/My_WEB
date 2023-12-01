@@ -5,17 +5,31 @@ from django.views.generic.edit import DeleteView
 from django.core.paginator import Paginator
 from django.http import FileResponse, JsonResponse
 from django.contrib.postgres.search import TrigramSimilarity
-# from actions.utils import create_action
 from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm
 from .models import Album, Image
 
 
+# from actions.utils import create_action
+
+
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
+    return render(request,
+                  "album/detail.html",
+                  {"album": album})
+
+
+@login_required
+def edit_album(request, id):
+    album = get_object_or_404(Album, id=id)
     if request.method == "POST":
+        form = AlbumEditForm(instance=album,
+                             data=request.POST)
         add_image_form = MultipleImageForm(request.POST,
                                            request.FILES)
-        if add_image_form.is_valid():
+        if form.is_valid() and add_image_form.is_valid():
+            album = form.save(commit=False)
+            album.author = request.user
             for image in request.FILES.getlist("images"):
                 Image.objects.create(image=image,
                                      album=album)
@@ -24,10 +38,11 @@ def album_detail(request, id):
             return redirect("album:album_detail",
                             album.id)
     else:
+        form = AlbumEditForm(instance=album)
         add_image_form = MultipleImageForm()
     return render(request,
-                  "album/detail.html",
-                  {"album": album, "add_image_form": add_image_form})
+                  "album/edit.html",
+                  {"form": form, "album": album, 'add_image_form': add_image_form})
 
 
 @login_required
@@ -40,7 +55,6 @@ def album_like(request):
             album = Album.objects.get(id=album_id)
             if action == 'like':
                 album.users_like.add(request.user)
-                # create_action(request.user, 'likes', album)
             else:
                 album.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
@@ -59,7 +73,6 @@ def create_album(request):
             album = form.save(commit=False)
             album.author = request.user
             album.save()
-            # create_action(request.user, 'create album', album)
             for image in request.FILES.getlist("images"):
                 Image.objects.create(image=image,
                                      album=album)
@@ -71,24 +84,6 @@ def create_album(request):
     return render(request,
                   "album/create.html",
                   {"form": form, "image_form": image_form})
-
-
-@login_required
-def edit_album(request, id):
-    album = get_object_or_404(Album, id=id)
-    if request.method == "POST":
-        form = AlbumEditForm(instance=album,
-                             data=request.POST)
-        if form.is_valid():
-            album = form.save(commit=False)
-            album.author = request.user
-            album.save()
-            return redirect("album:album_list")
-    else:
-        form = AlbumEditForm(instance=album)
-    return render(request,
-                  "album/edit.html",
-                  {"form": form, "album": album})
 
 
 @login_required
@@ -138,14 +133,15 @@ class AlbumDeleteView(DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
-        return reverse("album:album_list")
+        return reverse("user_detail",
+                       kwargs={'username': self.object.author})
 
 
 class ImageDeleteView(DeleteView):
     model = Image
 
     def get_success_url(self):
-        return reverse('album:album_detail',
+        return reverse('album:album_edit',
                        kwargs={'id': self.object.album.id})
 
 
