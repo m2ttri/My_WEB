@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import JsonResponse, HttpResponse
 from album.models import Album
 from .models import Profile, Contact
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
@@ -10,6 +11,15 @@ from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
 
 # from actions.utils import create_action
 # from actions.models import Action
+# def users_actions(request):
+#     actions = Action.objects.exclude(user=request.user)
+#     following_ids = request.user.following.values_list('id', flat=True)
+#     if following_ids:
+#         actions = actions.filter(user_id__in=following_ids)
+#     actions = actions.select_related('user', 'user__profile')[:10].prefetch_related('target')[:10]
+#     return render(request,
+#                   'account/user_profile.html',
+#                   {'actions': actions})
 
 
 def user_detail(request, username):
@@ -18,6 +28,25 @@ def user_detail(request, username):
                              is_active=True)
     albums_all = Album.objects.filter(author=user).all()
     albums_pub = Album.published.filter(author=user).all()
+    paginator_all = Paginator(albums_all, 8)
+    paginator_pub = Paginator(albums_pub, 8)
+    page = request.GET.get('page')
+    albums_only = request.GET.get('albums_only')
+    try:
+        albums_all = paginator_all.page(page)
+        albums_pub = paginator_pub.page(page)
+    except PageNotAnInteger:
+        albums_all = paginator_all.page(1)
+        albums_pub = paginator_pub.page(1)
+    except EmptyPage:
+        if albums_only:
+            return HttpResponse('')
+        albums_all = paginator_all.page(paginator_all.num_pages)
+        albums_pub = paginator_pub.page(paginator_pub.num_pages)
+    if albums_only:
+        return render(request,
+                      'account/user_albums_list.html',
+                      {'user': user, 'albums_all': albums_all, 'albums_pub': albums_pub})
     return render(request,
                   'account/user_profile.html',
                   {'user': user, 'albums_all': albums_all, 'albums_pub': albums_pub})
@@ -81,22 +110,12 @@ def user_follow(request):
     return JsonResponse({'status': 'error'})
 
 
-# def users_actions(request):
-#     actions = Action.objects.exclude(user=request.user)
-#     following_ids = request.user.following.values_list('id', flat=True)
-#     if following_ids:
-#         actions = actions.filter(user_id__in=following_ids)
-#     actions = actions.select_related('user', 'user__profile')[:10].prefetch_related('target')[:10]
+# def user_detail(request, username):
+#     user = get_object_or_404(User,
+#                              username=username,
+#                              is_active=True)
+#     albums_all = Album.objects.filter(author=user).all()
+#     albums_pub = Album.published.filter(author=user).all()
 #     return render(request,
 #                   'account/user_profile.html',
-#                   {'actions': actions})
-
-# from django.core.paginator import Paginator
-# def user_albums(request, user_id):
-#     profile = Profile.objects.get(user__id=user_id)
-#     albums = Album.published.filter(author=profile.user).all()
-#     paginator = Paginator(albums, 8)
-#     page_number = request.GET.get("page", 1)
-#     posts = paginator.page(page_number)
-#     context = {'posts': posts, 'profile': profile}
-#     return render(request, 'account/user_profile.html', context)
+#                   {'user': user, 'albums_all': albums_all, 'albums_pub': albums_pub})

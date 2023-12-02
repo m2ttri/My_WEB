@@ -6,44 +6,75 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <div style="display: flex; flex-wrap: wrap; justify-content: center">
-                    {% for album in posts %}
-                        <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
-                            <div class="card shadow-sm">
-                                {% with first_image=album.images.all|first %}
-                                    <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
-                                        <img src="{{ first_image.image.url }}" width="100%" alt="">
-                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
-                                            View album
-                                        </div>
-                                    </a>
-                                {% endwith %}
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between">
-                                        <p class="card-text fw-bold text-warning">{{ album.title }}</p>
-                                        <a href="{% url 'user_detail' album.author %}">{{ album.author }}</a>
-                                    </div>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">{{ album.publish|date:"F d, Y" }}</small>
-                                        {% with total_likes=album.users_like.count users_like=album.users_like.all %}
-                                            <span class="count">
-                                                <span class="total">{{ total_likes }}</span>
-                                                <i class="fa-solid fa-heart text-danger"></i>
-                                            </span>
-                                        {% endwith %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
+    <div id="albums-list">
+        {% include 'album/list.html' %}
     </div>
-    {% if posts.has_other_pages %}
-        {% include 'pagination.html' with page=posts %}
-    {% endif %}
 {% endblock %}
+
+{% block domready %}
+    window.addEventListener('scroll', function (e) {
+        const margin = document.body.clientHeight - window.innerHeight - 200;
+        if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
+            blockRequest = true;
+            page += 1;
+
+        fetch('?albums_only=1&page=' + page)
+            .then(response => response.text())
+            .then(html => {
+                if (html === '') {
+                    emptyPage = true;
+                }
+                else {
+                    const albumList = document.getElementById('albums-list');
+
+                    albumList.insertAdjacentHTML('beforeend', html);
+                    setupGallery();
+                    blockRequest = false;
+                }
+            })
+        }
+    });
+{% endblock %}
+
+{#{% block content %}#}
+{#    <div class="container">#}
+{#        <div class="row">#}
+{#            <div class="col-sm-12">#}
+{#                <div style="display: flex; flex-wrap: wrap; justify-content: center">#}
+{#                    {% for album in posts %}#}
+{#                        <div style="flex: 0 0 20%; margin: 1em; text-align: center;">#}
+{#                            <div class="card shadow-sm">#}
+{#                                {% with first_image=album.images.all|first %}#}
+{#                                    <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">#}
+{#                                        <img src="{{ first_image.image.url }}" width="100%" alt="">#}
+{#                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">#}
+{#                                            View album#}
+{#                                        </div>#}
+{#                                    </a>#}
+{#                                {% endwith %}#}
+{#                                <div class="card-body">#}
+{#                                    <div class="d-flex justify-content-between">#}
+{#                                        <p class="card-text fw-bold text-warning">{{ album.title }}</p>#}
+{#                                        <a href="{% url 'user_detail' album.author %}">{{ album.author }}</a>#}
+{#                                    </div>#}
+{#                                    <div class="d-flex justify-content-between align-items-center">#}
+{#                                        <small class="text-muted">{{ album.publish|date:"F d, Y" }}</small>#}
+{#                                        {% with total_likes=album.users_like.count users_like=album.users_like.all %}#}
+{#                                            <span class="count">#}
+{#                                                <span class="total">{{ total_likes }}</span>#}
+{#                                                <i class="fa-solid fa-heart text-danger"></i>#}
+{#                                            </span>#}
+{#                                        {% endwith %}#}
+{#                                    </div>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endfor %}#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#    {% if posts.has_other_pages %}#}
+{#        {% include 'pagination.html' with page=posts %}#}
+{#    {% endif %}#}
+{#{% endblock %}#}

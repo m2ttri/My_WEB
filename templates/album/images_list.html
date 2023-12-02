@@ -1,0 +1,58 @@
+{% load thumbnail %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="tm-img-gallery gallery-one">
+                <div class="tm-img-gallery-info-container">
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center">
+                        {% for image in images %}
+                            {% if image.image %}
+                                <div style="margin: 1em; text-align: center; position: relative;">
+                                    <div class="grid-item">
+                                        <figure class="effect-bubba">
+                                            <figcaption class="img">
+                                                <a href="{{ image.image.url }}">
+                                                    <img src="{% thumbnail image.image 200x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
+                                                </a>
+                                                <div style="display: flex; justify-content: end;">
+                                                    <div class="text-end">
+                                                        <div class="btn-group">
+                                                            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
+                                                                <i class="fa-solid fa-ellipsis"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu">
+                                                                <li>
+                                                                    <form action="{% url 'album:image_download' image.id %}" method="post">
+                                                                        {% csrf_token %}
+                                                                        <button type="submit" href="{% url 'album:image_download' image.id %}" class="dropdown-item text-light-emphasis" style="background: none; border: none; font-size: 15px">
+                                                                            <i class="fa-solid fa-circle-down" style="margin-right: 15px"></i>Download
+                                                                        </button>
+                                                                    </form>
+                                                                </li>
+                                                                {% if request.user == album.author %}
+                                                                    <li><hr class="dropdown-divider"></li>
+                                                                    <li>
+                                                                        <form action="{% url 'album:image_delete' image.id %}" method="post">
+                                                                            {% csrf_token %}
+                                                                            <button type="submit" href="{% url 'album:image_delete' image.id %}" class="dropdown-item text-danger-emphasis" style="background: none; border: none; font-size: 15px">
+                                                                                <i class="fa-solid fa-circle-xmark" style="margin-right: 15px"></i>Delete
+                                                                            </button>
+                                                                        </form>
+                                                                    </li>
+                                                                {% endif %}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </figcaption>
+                                        </figure>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

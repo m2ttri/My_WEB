@@ -2,21 +2,34 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.generic.edit import DeleteView
-from django.core.paginator import Paginator
-from django.http import FileResponse, JsonResponse
 from django.contrib.postgres.search import TrigramSimilarity
+from django.http import FileResponse, JsonResponse, HttpResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm
 from .models import Album, Image
 
 
-# from actions.utils import create_action
-
-
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
+    images = album.images.all()
+    paginator = Paginator(images, 10)
+    page = request.GET.get('page')
+    images_only = request.GET.get('images_only')
+    try:
+        images = paginator.page(page)
+    except PageNotAnInteger:
+        images = paginator.page(1)
+    except EmptyPage:
+        if images_only:
+            return HttpResponse('')
+        images = paginator.page(paginator.num_pages)
+    if images_only:
+        return render(request,
+                      'album/images_list.html',
+                      {'images': images})
     return render(request,
                   "album/detail.html",
-                  {"album": album})
+                  {'images': images, 'album': album})
 
 
 @login_required
@@ -86,17 +99,6 @@ def create_album(request):
                   {"form": form, "image_form": image_form})
 
 
-@login_required
-def album_list(request):
-    albums = Album.objects.filter(author=request.user)
-    paginator = Paginator(albums, 8)
-    page_number = request.GET.get("page", 1)
-    posts = paginator.page(page_number)
-    return render(request,
-                  "album/list.html",
-                  {"posts": posts})
-
-
 def album_search(request):
     form = SearchForm()
     query = None
@@ -145,6 +147,24 @@ class ImageDeleteView(DeleteView):
                        kwargs={'id': self.object.album.id})
 
 
+# @login_required
+# def album_list(request):
+#     albums = Album.objects.filter(author=request.user)
+#     paginator = Paginator(albums, 8)
+#     page_number = request.GET.get("page", 1)
+#     posts = paginator.page(page_number)
+#     return render(request,
+#                   "album/list.html",
+#                   {"posts": posts})
+
+
+# def album_detail(request, id):
+#     album = get_object_or_404(Album, id=id)
+#     return render(request,
+#                   "album/detail.html",
+#                   {"album": album})
+
+
 # @require_POST
 # def album_comment(request, id):
 #     album = get_object_or_404(Album,
@@ -160,22 +180,3 @@ class ImageDeleteView(DeleteView):
 #                   {'album': album,
 #                    'form': form,
 #                    'comment': comment})
-    
-
-# @login_required
-# def album_list(request):
-#     albums = Album.objects.filter(author=request.user)
-#     paginator = Paginator(albums, 8)
-#     page = request.GET.get("page")
-#     albums_only = request.GET.get('albums_only')
-#     try:
-#         albums = paginator.page(page)
-#     except PageNotAnInteger:
-#         albums = paginator.page(1)
-#     except EmptyPage:
-#         if albums_only:
-#             return HttpResponse('')
-#         albums = paginator.page(paginator.num_pages)
-#     if albums_only:
-#         return render(request, "album/list.html", {"albums": albums})
-#     return render(request, "album/js_list.html", {"albums": albums})

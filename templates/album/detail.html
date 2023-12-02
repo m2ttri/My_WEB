@@ -33,66 +33,38 @@
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="tm-img-gallery gallery-one">
-                    <div class="tm-img-gallery-info-container">
-                        <div style="display: flex; flex-wrap: wrap; justify-content: center">
-                            {% for image in album.images.all %}
-                                {% if image.image %}
-                                    <div style="margin: 1em; text-align: center; position: relative;">
-                                        <div class="grid-item">
-                                            <figure class="effect-bubba">
-                                                <figcaption class="img">
-                                                    <a href="{{ image.image.url }}">
-                                                        <img src="{% thumbnail image.image 200x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
-                                                    </a>
-                                                    <div style="display: flex; justify-content: end;">
-                                                        <div class="text-end">
-                                                            <div class="btn-group">
-                                                                <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
-                                                                    <i class="fa-solid fa-ellipsis"></i>
-                                                                </button>
-                                                                <ul class="dropdown-menu">
-                                                                    <li>
-                                                                        <form action="{% url 'album:image_download' image.id %}" method="post">
-                                                                            {% csrf_token %}
-                                                                            <button type="submit" href="{% url 'album:image_download' image.id %}" class="dropdown-item text-light-emphasis" style="background: none; border: none; font-size: 15px">
-                                                                                <i class="fa-solid fa-circle-down" style="margin-right: 15px"></i>Download
-                                                                            </button>
-                                                                        </form>
-                                                                    </li>
-                                                                    {% if request.user == album.author %}
-                                                                        <li><hr class="dropdown-divider"></li>
-                                                                        <li>
-                                                                            <form action="{% url 'album:image_delete' image.id %}" method="post">
-                                                                                {% csrf_token %}
-                                                                                <button type="submit" href="{% url 'album:image_delete' image.id %}" class="dropdown-item text-danger-emphasis" style="background: none; border: none; font-size: 15px">
-                                                                                    <i class="fa-solid fa-circle-xmark" style="margin-right: 15px"></i>Delete
-                                                                                </button>
-                                                                            </form>
-                                                                        </li>
-                                                                    {% endif %}
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </figcaption>
-                                            </figure>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div id="image-list">
+        {% include 'album/images_list.html' %}
     </div>
 {% endblock %}
 
 {% block domready %}
+    window.addEventListener('scroll', function (e) {
+        const margin = document.body.clientHeight - window.innerHeight - 200;
+        if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
+            blockRequest = true;
+            page += 1;
+
+        fetch('?images_only=1&page=' + page)
+            .then(response => response.text())
+            .then(html => {
+                if (html === '') {
+                    emptyPage = true;
+                }
+                else {
+                    const imageList = document.getElementById('image-list');
+
+                    imageList.insertAdjacentHTML('beforeend', html);
+                    setupGallery();
+                    blockRequest = false;
+                }
+            })
+        }
+    });
+
+    const scrollEvenet = new Event('scroll');
+    window.dispatchEvent(scrollEvenet);
+
     const url = '{% url "album:like" %}';
     var options = {
         method: 'POST',
@@ -127,17 +99,3 @@
         })
     });
 {% endblock %}
-
-
-{#                    <form action="{% url 'album:album_detail' album.id %}" method="post" class="form" enctype="multipart/form-data">#}
-{#                        {% csrf_token %}#}
-{#                        {% bootstrap_form add_image_form %}#}
-{#                        {% bootstrap_button "Add" button_type="submit" %}#}
-{#                    </form>#}
-
-{#                <form action="{% url 'user_detail' album.author %}">#}
-{#                    {% csrf_token %}#}
-{#                    <button type="submit" href="{% url 'user_detail' album.author %}">#}
-{#                        {{ album.author.username }}#}
-{#                    </button>#}
-{#                </form>#}
