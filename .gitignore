@@ -9,3 +9,4 @@ cert.key
 /media
 /.idea
 .pylintrc
+.idea
