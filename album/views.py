@@ -147,24 +147,6 @@ class ImageDeleteView(DeleteView):
                        kwargs={'id': self.object.album.id})
 
 
-# @login_required
-# def album_list(request):
-#     albums = Album.objects.filter(author=request.user)
-#     paginator = Paginator(albums, 8)
-#     page_number = request.GET.get("page", 1)
-#     posts = paginator.page(page_number)
-#     return render(request,
-#                   "album/list.html",
-#                   {"posts": posts})
-
-
-# def album_detail(request, id):
-#     album = get_object_or_404(Album, id=id)
-#     return render(request,
-#                   "album/detail.html",
-#                   {"album": album})
-
-
 # @require_POST
 # def album_comment(request, id):
 #     album = get_object_or_404(Album,
