@@ -5,6 +5,7 @@ from django.views.generic.edit import DeleteView
 from django.contrib.postgres.search import TrigramSimilarity
 from django.http import FileResponse, JsonResponse, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from actions.utils import create_action
 from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm
 from .models import Album, Image
 
@@ -43,11 +44,11 @@ def edit_album(request, id):
         if form.is_valid() and add_image_form.is_valid():
             album = form.save(commit=False)
             album.author = request.user
+            album.save()
             for image in request.FILES.getlist("images"):
                 Image.objects.create(image=image,
                                      album=album)
             album = Album.objects.get(id=id)
-            album.save()
             return redirect("album:album_detail",
                             album.id)
     else:
@@ -68,6 +69,7 @@ def album_like(request):
             album = Album.objects.get(id=album_id)
             if action == 'like':
                 album.users_like.add(request.user)
+                create_action(request.user, 'likes', album)
             else:
                 album.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
@@ -86,6 +88,7 @@ def create_album(request):
             album = form.save(commit=False)
             album.author = request.user
             album.save()
+            create_action(request.user, 'create album', album)
             for image in request.FILES.getlist("images"):
                 Image.objects.create(image=image,
                                      album=album)

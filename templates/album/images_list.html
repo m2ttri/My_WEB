@@ -12,7 +12,7 @@
                                         <figure class="effect-bubba">
                                             <figcaption class="img">
                                                 <a href="{{ image.image.url }}">
-                                                    <img src="{% thumbnail image.image 200x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
+                                                    <img src="{% thumbnail image.image 200x0 crop='smart' quality=100 %}" alt="Image" class="img-fluid tm-img">
                                                 </a>
                                                 <div style="display: flex; justify-content: end;">
                                                     <div class="text-end">

@@ -1,9 +1,9 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
-            {% if request.user == user %}
-                <div style="display: flex; flex-wrap: wrap; justify-content: center">
-                    {% for album in albums_all %}
+            <div style="display: flex; flex-wrap: wrap; justify-content: center">
+                {% for album in albums %}
+                    {% if request.user == user %}
                         <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
                             <div class="card shadow-sm">
                                 {% with first_image=album.images.all|first %}
@@ -18,14 +18,10 @@
                                     <div class="d-flex justify-content-between">
                                         <p class="card-text fw-bold text-warning">{{ album.title }}</p>
                                         {% if request.user == album.author %}
-                                            {%  if album.get_status_display == 'Private' %}
-                                                <p class="card-text text-danger-emphasis">
-                                                    {{ album.get_status_display }}
-                                                </p>
+                                            {% if album.get_status_display == 'Private' %}
+                                                <p class="card-text text-danger-emphasis">{{ album.get_status_display }}</p>
                                             {% else %}
-                                                <p class="card-text text-success-emphasis">
-                                                    {{ album.get_status_display }}
-                                                </p>
+                                                <p class="card-text text-success-emphasis">{{ album.get_status_display }}</p>
                                             {% endif %}
                                         {% else %}
                                             <p class="card-text text-secondary-emphasis">{{ album.author }}</p>
@@ -43,11 +39,7 @@
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div style="display: flex; flex-wrap: wrap; justify-content: center">
-                    {% for album in albums_pub %}
+                    {% elif album.status == 'PB' %}
                         <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
                             <div class="card shadow-sm">
                                 {% with first_image=album.images.all|first %}
@@ -62,14 +54,10 @@
                                     <div class="d-flex justify-content-between">
                                         <p class="card-text fw-bold text-warning">{{ album.title }}</p>
                                         {% if request.user == album.author %}
-                                            {%  if album.get_status_display == 'Private' %}
-                                                <p class="card-text text-danger-emphasis">
-                                                    {{ album.get_status_display }}
-                                                </p>
+                                            {% if album.get_status_display == 'Private' %}
+                                                <p class="card-text text-danger-emphasis">{{ album.get_status_display }}</p>
                                             {% else %}
-                                                <p class="card-text text-success-emphasis">
-                                                    {{ album.get_status_display }}
-                                                </p>
+                                                <p class="card-text text-success-emphasis">{{ album.get_status_display }}</p>
                                             {% endif %}
                                         {% else %}
                                             <p class="card-text text-secondary-emphasis">{{ album.author }}</p>
@@ -87,9 +75,9 @@
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>

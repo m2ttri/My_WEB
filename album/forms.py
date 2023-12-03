@@ -1,5 +1,5 @@
-from django.forms import ClearableFileInput, FileField
 from django import forms
+from django.forms import ClearableFileInput, FileField
 from .models import Album, Image, Comment
 
 
@@ -7,12 +7,6 @@ class AlbumForm(forms.ModelForm):
     class Meta:
         model = Album
         fields = ['title', 'status']
-
-    # def clean_title(self):
-    #     data = self.cleaned_data['title']
-    #     if Album.objects.filter(title=data).exists():
-    #         raise forms.ValidationError('Title already in use')
-    #     return data
 
 
 class ImageForm(forms.ModelForm):
@@ -52,7 +46,8 @@ class MultipleFileField(FileField):
 
 
 class MultipleImageForm(forms.Form):
-    images = MultipleFileField(widget=MultipleFileInput(attrs={'multiple': True}))
+    images = MultipleFileField(widget=MultipleFileInput(attrs={'multiple': True}),
+                               required=False)
 
 
 class SearchForm(forms.Form):

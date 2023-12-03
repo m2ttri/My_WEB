@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load thumbnail %}
 
 {% block title %}
     Profile of {{ user }}
@@ -35,6 +36,13 @@
             </div>
         </div>
     </div>
+
+    {% if request.user == user %}
+        <div id="actions">
+            {% include 'actions/detail.html' %}
+        </div>
+    {% endif %}
+
     <div id="albums-list">
         {% include 'account/user_albums_list.html' %}
     </div>
