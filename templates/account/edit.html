@@ -11,6 +11,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                    {% bootstrap_messages %}
                     {% if request.user.profile.photo %}
                         <img id="preview" class="rounded-circle mt-5" width="200px"
                              src="{{ request.user.profile.photo.url }}" alt="ava">

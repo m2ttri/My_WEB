@@ -41,11 +41,11 @@
         </div>
     </div>
 
-    {% if request.user == user %}
-        <div id="actions">
-            {% include 'actions/detail.html' %}
-        </div>
-    {% endif %}
+{#    {% if request.user == user %}#}
+{#        <div id="actions">#}
+{#            {% include 'actions/detail.html' %}#}
+{#        </div>#}
+{#    {% endif %}#}
 
     <div id="albums-list">
         {% include 'account/user_albums_list.html' %}

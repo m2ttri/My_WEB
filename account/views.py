@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.contrib.auth import login
+from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse, HttpResponse
 from album.models import Album
@@ -13,19 +14,8 @@ from actions.models import Action
 from album.views import r
 
 
-def get_action(request):
-    if request.user.is_authenticated:
-        following_ids = request.user.following.values_list('id', flat=True)
-        actions = Action.objects.exclude(user=request.user).filter(user_id__in=following_ids)
-        actions = actions.select_related('user', 'user__profile').prefetch_related('target')
-    else:
-        actions = Action.objects.none()
-    return actions
-
-
 def update_total_likes(album):
     album.total_likes = album.users_like.count()
-    # album.save()
 
 
 def get_total_likes(request, username):
@@ -48,6 +38,21 @@ def get_total_views(request, username):
     return total_views
 
 
+@login_required
+def get_action(request, username):
+    user = get_object_or_404(User,
+                             username=username,
+                             is_active=True)
+    if request.user.is_authenticated:
+        following_ids = request.user.following.values_list('id',
+                                                           flat=True)
+        actions = Action.objects.exclude(user=request.user).filter(user_id__in=following_ids)
+        actions = actions.select_related('user', 'user__profile').prefetch_related('target')
+    else:
+        actions = Action.objects.none()
+    return render(request, 'actions/detail.html', {'user': user, 'actions': actions})
+
+
 def user_detail(request, username):
     user = get_object_or_404(User,
                              username=username,
@@ -58,7 +63,6 @@ def user_detail(request, username):
     paginator = Paginator(albums, 8)
     page = request.GET.get('page')
     albums_only = request.GET.get('albums_only')
-    actions = get_action(request)
     sum_likes = get_total_likes(request, username)
     total_views = get_total_views(request, username)
     try:
@@ -72,12 +76,12 @@ def user_detail(request, username):
     if albums_only:
         return render(request,
                       'account/user_albums_list.html',
-                      {'user': user, 'albums': albums})
+                      {'user': user,
+                       'albums': albums})
     return render(request,
                   'account/user_profile.html',
                   {'user': user,
                    'albums': albums,
-                   'actions': actions,
                    'sum_likes': sum_likes,
                    'total_views': total_views})
 
@@ -111,13 +115,15 @@ def edit(request):
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
+            messages.success(request, 'Profile updated')
             return redirect('edit')
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
     return render(request,
                   'account/edit.html',
-                  {'user_form': user_form, 'profile_form': profile_form})
+                  {'user_form': user_form,
+                   'profile_form': profile_form})
 
 
 @require_POST
