@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
+from django.contrib.auth import login
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse, HttpResponse
 from album.models import Album
@@ -89,9 +90,9 @@ def register(request):
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
             Profile.objects.create(user=new_user)
-            return render(request,
-                          'account/register_done.html',
-                          {'new_user': new_user})
+            new_user.backend = 'django.contrib.auth.backends.ModelBackend'
+            login(request, new_user)
+            return redirect('edit')
     else:
         user_form = UserRegistrationForm()
     return render(request,
