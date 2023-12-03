@@ -2,10 +2,13 @@ from django.shortcuts import render
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from album.models import Album
+from album.views import r
 
 
 def index(request):
     albums = Album.published.all()
+    for album in albums:
+        album.total_views = r.get(f'album:{album.id}:views').decode()
     paginator = Paginator(albums, 8)
     page = request.GET.get('page')
     albums_only = request.GET.get('albums_only')
@@ -24,13 +27,3 @@ def index(request):
     return render(request,
                   'index.html',
                   {'albums': albums})
-
-
-# def index(request):
-#     albums = Album.published.all()
-#     paginator = Paginator(albums, 8)
-#     page_number = request.GET.get('page', 1)
-#     posts = paginator.page(page_number)
-#     return render(request,
-#                   'index.html',
-#                   {'posts': posts})

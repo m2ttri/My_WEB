@@ -20,18 +20,22 @@
             </div>
             <div class="p-5">
                 <h1 class="text-warning">{{ user.username }}</h1>
+                <p>{{ sum_likes }} like{{ sum_likes|pluralize }}</p>
+                <p>{{ total_views }} view{{ total_views|pluralize }}</p>
                 {% with total_followers=user.followers.count %}
                 	<span class="count">
                         <span class="total">{{ total_followers }}</span>
                         follower{{ total_followers|pluralize }}
                     </span>
-                    <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
-                        {% if request.user not in user.followers.all %}
-                        	Follow
-                        {% else %}
-                        	Unfollow
-                        {% endif %} 
-                    </a>
+                    {% if request.user.is_authenticated and request.user != user %}
+                        <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
+                            {% if request.user not in user.followers.all %}
+                                Follow
+                            {% else %}
+                                Unfollow
+                            {% endif %}
+                        </a>
+                    {% endif %}
                 {% endwith %}
             </div>
         </div>

@@ -9,6 +9,7 @@ from .models import Profile, Contact
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
 from actions.utils import create_action
 from actions.models import Action
+from album.views import r
 
 
 def get_action(request):
@@ -21,15 +22,44 @@ def get_action(request):
     return actions
 
 
+def update_total_likes(album):
+    album.total_likes = album.users_like.count()
+    # album.save()
+
+
+def get_total_likes(request, username):
+    user = get_object_or_404(User,
+                             username=username,
+                             is_active=True)
+    albums = Album.objects.filter(author=user).all()
+    for album in albums:
+        update_total_likes(album)
+    sum_likes = sum(album.total_likes for album in albums)
+    return sum_likes
+
+
+def get_total_views(request, username):
+    user = get_object_or_404(User,
+                             username=username,
+                             is_active=True)
+    albums = Album.objects.filter(author=user).all()
+    total_views = sum(int(r.get(f'album:{album.id}:views').decode()) for album in albums)
+    return total_views
+
+
 def user_detail(request, username):
     user = get_object_or_404(User,
                              username=username,
                              is_active=True)
     albums = Album.objects.filter(author=user).all()
+    for album in albums:
+        album.total_views = r.get(f'album:{album.id}:views').decode()
     paginator = Paginator(albums, 8)
     page = request.GET.get('page')
     albums_only = request.GET.get('albums_only')
     actions = get_action(request)
+    sum_likes = get_total_likes(request, username)
+    total_views = get_total_views(request, username)
     try:
         albums = paginator.page(page)
     except PageNotAnInteger:
@@ -44,7 +74,11 @@ def user_detail(request, username):
                       {'user': user, 'albums': albums})
     return render(request,
                   'account/user_profile.html',
-                  {'user': user, 'albums': albums, 'actions': actions})
+                  {'user': user,
+                   'albums': albums,
+                   'actions': actions,
+                   'sum_likes': sum_likes,
+                   'total_views': total_views})
 
 
 def register(request):
@@ -104,40 +138,3 @@ def user_follow(request):
         except User.DoesNotExist:
             return JsonResponse({'status': 'error'})
     return JsonResponse({'status': 'error'})
-
-
-# @login_required
-# def user_detail(request, username):
-#     actions = Action.objects.exclude(user=request.user)
-#     following_ids = request.user.following.values_list('id',
-#                                                        flat=True)
-#     if following_ids:
-#         actions = actions.filter(user_id__in=following_ids)
-#     actions = actions.select_related('user', 'user__profile').prefetch_related('target')[:10]
-#     user = get_object_or_404(User,
-#                              username=username,
-#                              is_active=True)
-#     albums_all = Album.objects.filter(author=user).all()
-#     albums_pub = Album.published.filter(author=user).all()
-#     paginator_all = Paginator(albums_all, 8)
-#     paginator_pub = Paginator(albums_pub, 8)
-#     page = request.GET.get('page')
-#     albums_only = request.GET.get('albums_only')
-#     try:
-#         albums_all = paginator_all.page(page)
-#         albums_pub = paginator_pub.page(page)
-#     except PageNotAnInteger:
-#         albums_all = paginator_all.page(1)
-#         albums_pub = paginator_pub.page(1)
-#     except EmptyPage:
-#         if albums_only:
-#             return HttpResponse('')
-#         albums_all = paginator_all.page(paginator_all.num_pages)
-#         albums_pub = paginator_pub.page(paginator_pub.num_pages)
-#     if albums_only:
-#         return render(request,
-#                       'account/user_albums_list.html',
-#                       {'user': user, 'albums_all': albums_all, 'albums_pub': albums_pub})
-#     return render(request,
-#                   'account/user_profile.html',
-#                   {'user': user, 'albums_all': albums_all, 'albums_pub': albums_pub, 'actions': actions})

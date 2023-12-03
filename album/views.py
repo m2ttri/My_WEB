@@ -1,3 +1,5 @@
+import redis
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -10,8 +12,24 @@ from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm
 from .models import Album, Image
 
 
+r = redis.Redis(host=settings.REDIS_HOST,
+                port=settings.REDIS_PORT,
+                db=settings.REDIS_DB)
+
+
+def get_total_views(request, id):
+    album = get_object_or_404(Album, id=id)
+    total_views = r.incr(f'album:{album.id}:views')
+    return total_views
+
+
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
+    if not request.session.get(f'viewed_album_{album.id}', False):
+        total_views = get_total_views(request, id)
+        request.session[f'viewed_album_{album.id}'] = True
+    else:
+        total_views = r.get(f'album:{album.id}:views').decode()
     images = album.images.all()
     paginator = Paginator(images, 10)
     page = request.GET.get('page')
@@ -30,7 +48,7 @@ def album_detail(request, id):
                       {'images': images})
     return render(request,
                   "album/detail.html",
-                  {'images': images, 'album': album})
+                  {'images': images, 'album': album, 'total_views': total_views})
 
 
 @login_required

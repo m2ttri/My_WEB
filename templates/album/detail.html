@@ -12,6 +12,7 @@
             <div class="col-4 p-5">
                 <h1 class="text-warning">{{ album.title }}</h1>
                 <p><a href="{% url 'user_detail' album.author %}">{{ album.author }}</a></p>
+                <p>{{ total_views }} view{{ total_views|pluralize }}</p>
                 {% if request.user == album.author %}
                     <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
                 {% endif %}
@@ -63,7 +64,7 @@
     });
 
     const scrollEvenet = new Event('scroll');
-    window.dispatchEvent(scrollEvenet);
+{#    window.dispatchEvent(scrollEvenet);#}
 
     const url = '{% url "album:like" %}';
     var options = {

@@ -26,14 +26,16 @@ class Album(models.Model):
     users_like = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                         related_name='albums_liked',
                                         blank=True)
+    total_likes = models.PositiveIntegerField(default=0)
     objects = models.Manager()
     published = PublishedManager()
 
     class Meta:
-        ordering = ['-update']
         indexes = [
             models.Index(fields=['-update']),
+            models.Index(fields=['-total_likes']),
         ]
+        ordering = ['-update']
 
     def __str__(self):
         return self.title
