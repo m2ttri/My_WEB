@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'django.contrib.postgres',
     'actions.apps.ActionsConfig',
+    'django.contrib.humanize',
 ]
 
 

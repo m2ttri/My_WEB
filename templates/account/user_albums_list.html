@@ -1,3 +1,4 @@
+{% load static %}
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
@@ -7,28 +8,28 @@
                         <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
                             <div class="card shadow-sm">
                                 {% with first_image=album.images.all|first %}
-                                    <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
+                                <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
+                                    {% if first_image %}
                                         <img src="{{ first_image.image.url }}" width="100%" alt="">
-                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
-                                            View album
-                                        </div>
-                                    </a>
+                                    {% else %}
+                                        <img src="{% static 'images/no_image.jpg' %}" width="100%" alt="">
+                                    {% endif %}
+                                </a>
                                 {% endwith %}
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <p class="card-text fw-bold text-warning">{{ album.title }}</p>
-                                        {% if request.user == album.author %}
                                             {% if album.get_status_display == 'Private' %}
                                                 <p class="card-text text-danger-emphasis">{{ album.get_status_display }}</p>
                                             {% else %}
                                                 <p class="card-text text-success-emphasis">{{ album.get_status_display }}</p>
                                             {% endif %}
-                                        {% else %}
-                                            <p class="card-text text-secondary-emphasis">{{ album.author }}</p>
-                                        {% endif %}
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
                                         <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
+                                        {% with album.comments.count as total_comments %}
+                                        	<span class="text-muted"><i class="fa-solid fa-message"></i> {{ total_comments }}</span>
+                                        {% endwith %}
                                         {% with total_likes=album.users_like.count users_like=album.users_like.all %}
                                             <span class="count">
                                                 <span class="total">{{ total_likes }}</span>
@@ -45,26 +46,18 @@
                                 {% with first_image=album.images.all|first %}
                                     <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
                                         <img src="{{ first_image.image.url }}" width="100%" alt="">
-                                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
-                                            View album
-                                        </div>
                                     </a>
                                 {% endwith %}
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
-                                        <p class="card-text fw-bold text-warning">{{ album.title }}</p>
-                                        {% if request.user == album.author %}
-                                            {% if album.get_status_display == 'Private' %}
-                                                <p class="card-text text-danger-emphasis">{{ album.get_status_display }}</p>
-                                            {% else %}
-                                                <p class="card-text text-success-emphasis">{{ album.get_status_display }}</p>
-                                            {% endif %}
-                                        {% else %}
-                                            <p class="card-text text-secondary-emphasis">{{ album.author }}</p>
-                                        {% endif %}
+                                        <p class="card-text fw-bold"><a href="{% url 'album:album_detail' album.id %}" style="text-decoration: none; color: #ffc107;">{{ album.title }}</a></p>
+                                        <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
-{#                                        <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>#}
+                                        <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
+                                        {% with album.comments.count as total_comments %}
+                                        	<span class="text-muted"><i class="fa-solid fa-message"></i> {{ total_comments }}</span>
+                                        {% endwith %}
                                         {% with total_likes=album.users_like.count users_like=album.users_like.all %}
                                             <span class="count">
                                                 <span class="total">{{ total_likes }}</span>

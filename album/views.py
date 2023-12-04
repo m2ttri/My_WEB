@@ -139,16 +139,15 @@ def album_search(request):
             results = Album.published.annotate(
                 similarity=TrigramSimilarity('title', query), ).filter(
                 similarity__gt=0.1).order_by('-similarity')
+            for album in results:
+                album.total_views = r.get(f'album:{album.id}:views').decode()
             return render(request,
                           'album/search.html',
-                          {'form': form,
-                           'query': query,
+                          {'query': query,
                            'results': results})
     return render(request,
                   'base.html',
-                  {'form': form,
-                   'query': query,
-                   'results': results})
+                  {'form': form})
 
 
 def download_image(request, image_id):
