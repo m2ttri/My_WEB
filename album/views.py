@@ -17,24 +17,6 @@ r = redis.Redis(host=settings.REDIS_HOST,
                 db=settings.REDIS_DB)
 
 
-# @require_POST
-# def album_comment(request, id):
-#     album = get_object_or_404(Album,
-#                               id=id,
-#                               status=Album.Status.PUBLIC)
-#     comment = None
-#     form = CommentForm(data=request.POST)
-#     if form.is_valid():
-#         comment = form.save(commit=False)
-#         comment.album = album
-#         comment.save()
-#         return redirect('album:album_detail',
-#                         album.id)
-#     else:
-#         form = CommentForm()
-#     return form
-
-
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
     total_views = r.incr(f'album:{album.id}:views')
@@ -195,4 +177,12 @@ class ImageDeleteView(DeleteView):
 
     def get_success_url(self):
         return reverse('album:album_edit',
+                       kwargs={'id': self.object.album.id})
+
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+
+    def get_success_url(self):
+        return reverse('album:album_detail',
                        kwargs={'id': self.object.album.id})

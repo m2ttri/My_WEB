@@ -9,7 +9,6 @@ from django.http import JsonResponse, HttpResponse
 from album.models import Album
 from .models import Profile, Contact
 from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
-from actions.utils import create_action
 from actions.models import Action
 from album.views import r
 

@@ -56,7 +56,7 @@ class Comment(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              related_name='comments',
                              on_delete=models.CASCADE)
-    body = models.TextField()
+    body = models.TextField(blank=True)
     update = models.DateTimeField(auto_now=True)
 
     class Meta:

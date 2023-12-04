@@ -16,6 +16,9 @@ class ImageForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
+    body = forms.CharField(label='Type comment...',
+                           widget=forms.Textarea(attrs={'rows': 4, 'cols': 15}))
+
     class Meta:
         model = Comment
         fields = ['body']

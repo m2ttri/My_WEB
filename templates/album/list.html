@@ -20,10 +20,13 @@
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
                                         <p class="card-text fw-bold text-warning">{{ album.title }}</p>
-                                        <a href="{% url 'user_detail' album.author %}">{{ album.author }}</a>
+                                        <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
+                                        <span class="text-muted"><i class="fa-solid fa-users-viewfinder"></i> {{ album.total_views }}</span>
+                                        {% with album.comments.count as total_comments %}
+                                        	<span class="text-muted"><i class="fa-solid fa-message"></i> {{ total_comments }}</span>
+                                        {% endwith %}
                                         {% with total_likes=album.users_like.count users_like=album.users_like.all %}
                                             <span class="count">
                                                 <span class="total">{{ total_likes }}</span>
