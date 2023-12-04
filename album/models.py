@@ -64,3 +64,6 @@ class Comment(models.Model):
         indexes = [
             models.Index(fields=['-update']),
         ]
+
+    def __str__(self):
+        return f'Comment by {self.user} on {self.album}'

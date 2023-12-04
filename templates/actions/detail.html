@@ -1,54 +1,115 @@
 {% extends 'base.html' %}
 {% load thumbnail %}
-{% load static %}
 
 {% block title %}
 	ACTIONS
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                {% for action in actions %}
-                    {% with user=action.user profile=action.user.profile %}
-                        <div class="action">
-                            <div class="images">
-                                {% if profile.photo %}
-                                    {% thumbnail user.profile.photo "80x80" crop="100%" as im %}
-                                    <a href="{{ user.get_absolute_url }}">
-                                        <img src="{{ im.url }}" alt="{{ user.get_full_name }}"
-                                             class="item-img">
-                                    </a>
-                                {% endif %}
-                                {% if action.target %}
-                                    {% with target=action.target %}
-                                        {% if target.image %}
-                                            {% thumbnail target.image "80x80" crop="100%" as im %}
-                                            <a href="{{ target.get_absolute_url }}">
-                                                <img src="{{ im.url }}" class="item-img">
-                                            </a>
-                                        {% endif %}
-                                    {% endwith %}
-                                {% endif %}
-                            </div>
-                            <div class="info">
-                                <p>
-                                    <span class="date">{{ action.created|timesince }} ago</span>
-                                    <br/>
-                                    <a href="{% url 'user_detail' user %}">{{ user }}</a>
-                                    {{ action.verb }}
-                                    {% if action.target %}
-                                        {% with target=action.target %}
-                                            <a href="#">{{ target }}</a>
-                                        {% endwith %}
-                                    {% endif %}
-                                </p>
-                            </div>
-                        </div>
-                    {% endwith %}
-                {% endfor %}
-            </div>
+	<div class="container py-5">
+        <div class="row justify-content-center align-items-center">
+            {% for action in actions %}
+                {% with user=action.user profile=action.user.profile %}
+                    <div class="col-7 py-1">
+{#                        {% thumbnail user.profile.photo "80x80" crop="100%" as im %}#}
+                        <a href="{% url 'user_detail' user %}">{{ user }}</a>
+{#                            <img src="{{ im.url }}" alt="{{ user }}" class="item-img">#}
+                        {{ action.verb }}
+                        {% with target=action.target %}
+                            <a href="{% url 'album:album_detail' target.id %}">{{ target }}</a>
+                        {% endwith %}
+                    </div>
+                {% endwith %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
+
+
+{#                {% with user=action.user profile=action.user.profile %}#}
+{#                    <div class="col-7 py-1">#}
+{#                        {% if profile.photo %}#}
+{#                            {% thumbnail user.profile.photo "80x80" crop="100%" as im %}#}
+{#                            <a href="{% url 'user_detail' user %}">#}
+{#                                <img src="{{ im.url }}" alt="{{ user }}" class="item-img">#}
+{#                            </a>#}
+{#                        {% else %}#}
+{#                            <a href="{% url 'user_detail' user %}">#}
+{#                                <img src="{% static 'images/no_image.jpg' %}" alt="{{ user }}" width="80px">#}
+{#                            </a>#}
+{#                        {% endif %}#}
+{#                        {{ action.verb }}#}
+{#                        {% with target=action.target %}#}
+{#                            <a href="#">{{ target }}</a>#}
+{#                        {% endwith %}#}
+{#                    </div>#}
+{#                {% endwith %}#}
+
+
+
+
+
+{#{{ action.created|timesince }} ago#}
+{#{% block content %}#}
+{#    <div class="container">#}
+{#        <div class="row">#}
+{#            <div class="col">#}
+{#                {% for action in actions %}#}
+{#                    {% with user=action.user profile=action.user.profile %}#}
+{#                        <div class="action">#}
+{#                            <div class="images">#}
+{#                                {% if profile.photo %}#}
+{#                                    {% thumbnail user.profile.photo "80x80" crop="100%" as im %}#}
+{#                                    <a href="{% url 'user_detail' user %}">#}
+{#                                        <img src="{{ im.url }}" alt="{{ user }}"#}
+{#                                             class="item-img">#}
+{#                                    </a>#}
+{#                                {% endif %}#}
+{#                                {% if action.target %}#}
+{#                                    {% with target=action.target %}#}
+{#                                        {% if target.image %}#}
+{#                                            {% thumbnail target.image "80x80" crop="100%" as im %}#}
+{#                                            <a href="{{ target.get_absolute_url }}">#}
+{#                                                <img src="{{ im.url }}" class="item-img">#}
+{#                                            </a>#}
+{#                                        {% endif %}#}
+{#                                    {% endwith %}#}
+{#                                {% endif %}#}
+{#                            </div>#}
+{#                            <div class="info">#}
+{#                                <p>#}
+{#                                    <span class="date">{{ action.created|timesince }} ago</span>#}
+{#                                    <br/>#}
+{#                                    <a href="{% url 'user_detail' user %}">{{ user }}</a>#}
+{#                                    {{ action.verb }}#}
+{#                                    {% if action.target %}#}
+{#                                        {% with target=action.target %}#}
+{#                                            <a href="#">{{ target }}</a>#}
+{#                                        {% endwith %}#}
+{#                                    {% endif %}#}
+{#                                </p>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    {% endwith %}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
+{#{% endblock %}#}
+
+
+{#                                <p>#}
+{#                                    <span class="date">{{ action.created|timesince }} ago</span>#}
+{#                                    <br/>#}
+{#                                    <a href="{% url 'user_detail' user %}">{{ user }}</a>#}
+{#                                    {{ action.verb }}#}
+{#                                    {% if action.target %}#}
+{#                                        {% with target=action.target %}#}
+{#                                            {% if target.status %}#}
+{#                                                {% if target.status != 'PR' %}#}
+{#                                                    <a href="{% url 'album:album_detail' target.id %}">{{ target }}</a>#}
+{#                                                {% endif %}#}
+{#                                            {% endif %}#}
+{#                                        {% endwith %}#}
+{#                                    {% endif %}#}
+{#                                </p>#}

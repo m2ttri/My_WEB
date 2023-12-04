@@ -10,15 +10,17 @@
     <div class="container border border-start-0 border-end-0">
         <div class="d-flex align-items-center" style="padding-left: 82px;">
             <div class="col-4 p-5">
-                <h1 class="text-warning">{{ album.title }}</h1>
-                <p><a href="{% url 'user_detail' album.author %}">{{ album.author }}</a></p>
-                <p>{{ total_views }} view{{ total_views|pluralize }}</p>
-                {% if request.user == album.author %}
-                    <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
-                {% endif %}
                 {% with total_likes=album.users_like.count users_like=album.users_like.all %}
+                    <h1 class="text-warning">{{ album.title }}</h1>
+                    <p><small class="text-muted">{{ album.publish|date:"F d, Y" }}</small></p>
+                    <p>{{ total_views }} view{{ total_views|pluralize }}</p>
+                    <p>{{ total_likes }} like{{ total_likes|pluralize }}</p>
+                    <p><a href="{% url 'user_detail' album.author %}">{{ album.author }}</a></p>
+                    {% if request.user == album.author %}
+                        <p><a href="{% url 'album:album_edit' album.id %}">edit album</a></p>
+                    {% endif %}
                     {% if request.user.is_authenticated %}
-                        <button data-id="{{ album.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="btn btn-outline-danger like button">
+                        <button data-id="{{ album.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="btn btn-success like button">
                             {% if request.user not in users_like %}
                                 like
                             {% else %}
@@ -26,16 +28,30 @@
                             {% endif %}
                         </button>
                     {% endif %}
-                    <span class="count">
-                        <span class="total">{{ total_likes }}</span>
-                        like{{ total_likes|pluralize }}
-                    </span>
                 {% endwith %}
             </div>
         </div>
     </div>
     <div id="image-list">
         {% include 'album/images_list.html' %}
+    </div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <form action="{% url 'album:album_detail' album.id %}" method="post">
+                    {% csrf_token %}
+                    {% bootstrap_form comment_form %}
+                    {% bootstrap_button "Add comment" button_type="submit" %}
+                </form>
+                {% for comment in comments %}
+                    <p>
+                        {% thumbnail comment.user.profile.photo "40x40" crop="100%" as im %}: {{ comment.body }}
+                        <a href="{% url 'user_detail' user %}">{{ user }}</a>
+                            <img src="{{ im.url }}" alt="{{ user }}" class="item-img">
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 {% endblock %}
 

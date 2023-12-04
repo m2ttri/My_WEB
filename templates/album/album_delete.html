@@ -21,7 +21,7 @@
                                 {% csrf_token %}
                                 {% bootstrap_button "Delete" button_type="submit" button_class="btn-danger" %}
                             </form>
-                            <form action="{% url 'album:album_list' %}" method="post" class="form">
+                            <form action="{% url 'user_detail' request.user.username %}" method="post" class="form">
                                 {% csrf_token %}
                                 {% bootstrap_button "Cancel" button_type="submit" button_class="btn-outline-secondary" %}
                             </form>

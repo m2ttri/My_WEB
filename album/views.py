@@ -8,8 +8,8 @@ from django.contrib.postgres.search import TrigramSimilarity
 from django.http import FileResponse, JsonResponse, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from actions.utils import create_action
-from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm
-from .models import Album, Image
+from .forms import AlbumForm, AlbumEditForm, MultipleImageForm, SearchForm, CommentForm
+from .models import Album, Image, Comment
 
 
 r = redis.Redis(host=settings.REDIS_HOST,
@@ -17,19 +17,27 @@ r = redis.Redis(host=settings.REDIS_HOST,
                 db=settings.REDIS_DB)
 
 
-def get_total_views(request, id):
-    album = get_object_or_404(Album, id=id)
-    total_views = r.incr(f'album:{album.id}:views')
-    return total_views
+# @require_POST
+# def album_comment(request, id):
+#     album = get_object_or_404(Album,
+#                               id=id,
+#                               status=Album.Status.PUBLIC)
+#     comment = None
+#     form = CommentForm(data=request.POST)
+#     if form.is_valid():
+#         comment = form.save(commit=False)
+#         comment.album = album
+#         comment.save()
+#         return redirect('album:album_detail',
+#                         album.id)
+#     else:
+#         form = CommentForm()
+#     return form
 
 
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
-    if not request.session.get(f'viewed_album_{album.id}', False):
-        total_views = get_total_views(request, id)
-        request.session[f'viewed_album_{album.id}'] = True
-    else:
-        total_views = r.get(f'album:{album.id}:views').decode()
+    total_views = r.incr(f'album:{album.id}:views')
     images = album.images.all()
     paginator = Paginator(images, 10)
     page = request.GET.get('page')
@@ -42,13 +50,29 @@ def album_detail(request, id):
         if images_only:
             return HttpResponse('')
         images = paginator.page(paginator.num_pages)
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.album = album
+            comment.user = request.user
+            comment.save()
+            return redirect('album:album_detail',
+                            album.id)
+    else:
+        form = CommentForm()
     if images_only:
         return render(request,
                       'album/images_list.html',
                       {'images': images})
+    comments = Comment.objects.filter(album=album)
     return render(request,
                   "album/detail.html",
-                  {'images': images, 'album': album, 'total_views': total_views})
+                  {'images': images,
+                   'album': album,
+                   'total_views': total_views,
+                   'comment_form': form,
+                   'comments': comments})
 
 
 @login_required
@@ -74,7 +98,9 @@ def edit_album(request, id):
         add_image_form = MultipleImageForm()
     return render(request,
                   "album/edit.html",
-                  {"form": form, "album": album, 'add_image_form': add_image_form})
+                  {"form": form,
+                   "album": album,
+                   'add_image_form': add_image_form})
 
 
 @login_required
@@ -87,7 +113,6 @@ def album_like(request):
             album = Album.objects.get(id=album_id)
             if action == 'like':
                 album.users_like.add(request.user)
-                create_action(request.user, 'likes', album)
             else:
                 album.users_like.remove(request.user)
             return JsonResponse({'status': 'ok'})
@@ -117,7 +142,8 @@ def create_album(request):
         image_form = MultipleImageForm()
     return render(request,
                   "album/create.html",
-                  {"form": form, "image_form": image_form})
+                  {"form": form,
+                   "image_form": image_form})
 
 
 def album_search(request):
@@ -133,10 +159,14 @@ def album_search(request):
                 similarity__gt=0.1).order_by('-similarity')
             return render(request,
                           'album/search.html',
-                          {'form': form, 'query': query, 'results': results})
+                          {'form': form,
+                           'query': query,
+                           'results': results})
     return render(request,
                   'base.html',
-                  {'form': form, 'query': query, 'results': results})
+                  {'form': form,
+                   'query': query,
+                   'results': results})
 
 
 def download_image(request, image_id):
@@ -166,20 +196,3 @@ class ImageDeleteView(DeleteView):
     def get_success_url(self):
         return reverse('album:album_edit',
                        kwargs={'id': self.object.album.id})
-
-
-# @require_POST
-# def album_comment(request, id):
-#     album = get_object_or_404(Album,
-#                               id=id,
-#                               status=Album.Status.PUBLIC)
-#     comment = None
-#     form = CommentForm(data=request.POST)
-#     if form.is_valid():
-#         comment = form.save(commit=False)
-#         comment.album = album
-#         comment.save()
-#     return render(request, 'album/detail.html',
-#                   {'album': album,
-#                    'form': form,
-#                    'comment': comment})

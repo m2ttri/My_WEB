@@ -1,36 +1,40 @@
+{% load static %}
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
             <div style="display: flex; flex-wrap: wrap; justify-content: center">
                 {% for album in albums %}
-                    <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
-                        <div class="card shadow-sm">
-                            {% with first_image=album.images.all|first %}
+                    {% with first_image=album.images.all|first %}
+                        <div style="flex: 0 0 20%; margin: 1em; text-align: center;">
+                            <div class="card shadow-sm">
                                 <a href="{% url 'album:album_detail' album.id %}" style="position: relative; display: inline-block;">
-                                    <img src="{{ first_image.image.url }}" width="100%" alt="">
+                                    {% if first_image %}
+                                        <img src="{{ first_image.image.url }}" width="100%" alt="">
+                                    {% else %}
+                                        <img src="{% static 'images/no_image.jpg' %}" width="100%" alt="">
+                                    {% endif %}
                                     <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; background: rgba(0, 0, 0, 0.5); padding: 10px;">
                                         View album
                                     </div>
                                 </a>
-                            {% endwith %}
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between">
-                                    <p class="card-text fw-bold text-warning">{{ album.title }}</p>
-                                    <a href="{% url 'user_detail' album.author %}">{{ album.author }}</a>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-{#                                    <small class="text-muted">{{ album.publish|date:"F d, Y" }}</small>#}
-                                    <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
-                                    {% with total_likes=album.users_like.count users_like=album.users_like.all %}
-                                        <span class="count">
-                                            <span class="total">{{ total_likes }}</span>
-                                            <i class="fa-solid fa-heart text-danger"></i>
-                                        </span>
-                                    {% endwith %}
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <p class="card-text fw-bold text-warning">{{ album.title }}</p>
+                                        <a href="{% url 'user_detail' album.author %}">{{ album.author }}</a>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
+                                        {% with total_likes=album.users_like.count users_like=album.users_like.all %}
+                                            <span class="count">
+                                                <span class="total">{{ total_likes }}</span>
+                                                <i class="fa-solid fa-heart text-danger"></i>
+                                            </span>
+                                        {% endwith %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    {% endwith %}
                 {% endfor %}
             </div>
         </div>
