@@ -8,38 +8,53 @@
 	Album details
 {% endblock %}
 
+
 {% block content %}
+
     <div class="container">
         <div class="d-flex align-items-center" style="padding-left: 82px;">
             <div class="col-4 p-5">
-                {% with total_likes=album.users_like.count users_like=album.users_like.all %}
-                    <h1 class="text-warning">{{ album.title }}</h1>
-                    <small class="text-muted">by <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a></small>
-                    <br>
-                    <small class="text-muted">last update {{ album.publish|naturaltime }}</small>
-                    {% if request.user == album.author %}
-                        <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
-                    {% endif %}
-                    <p></p>
-                    <p>{{ total_views }} view{{ total_views|pluralize }}</p>
-                    <p>
-                        {% with total_likes=album.users_like.count users_like=image.users_like.all %}
-                            <span class="count">
-                                <span class="total">{{ total_likes }}</span>
-                                like{{ total_followers|pluralize }}
-                            </span>
-                        {% endwith %}
-                    </p>
-                    {% if request.user.is_authenticated %}
-                        <button data-id="{{ album.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="btn btn-success like button">
-                            {% if request.user not in users_like %}
-                                like
-                            {% else %}
-                                unlike
-                            {% endif %}
-                        </button>
-                    {% endif %}
-                {% endwith %}
+
+                <h1 class="text-warning">{{ album.title }}</h1>
+                <small class="text-muted">by <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a></small>
+                <br>
+                <small class="text-muted">last update {{ album.publish|naturaltime }}</small>
+
+                {% if request.user == album.author %}
+                    <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
+                {% endif %}
+
+                <p></p>
+
+                <p>{{ total_views }} view{{ total_views|pluralize }}</p>
+
+                <p>
+                    {% with total_likes=album.users_like.count users_like=album.users_like.all %}
+
+                        {% if request.user.is_authenticated %}
+                            <button data-id="{{ album.id }}"
+                                    data-action="{% if request.user in users_like %}unlike{% else %}like{% endif %}"
+                                    class="btn btn-primary fw-bold like button" id="like-button">
+
+                                <span class="count">
+                                    <span class="total">{{ total_likes }}</span>
+                                </span>
+
+                                {% if request.user not in users_like %}
+                                    <i class="fa-solid fa-heart"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-heart-crack"></i>
+                                {% endif %}
+                            </button>
+
+                        {% else %}
+                            <span class="total">{{ total_likes }}</span>
+                            <i class="fa-solid fa-heart"></i>
+                        {% endif %}
+
+                    {% endwith %}
+                </p>
+
             </div>
         </div>
     </div>
@@ -53,34 +68,44 @@
             <div class="row justify-content-center">
                 <div class="col-6">
                     <div class="form-outline mb-3">
+
                         <form action="{% url 'album:album_detail' album.id %}" method="post">
                             {% csrf_token %}
                             {% bootstrap_form comment_form show_label=False %}
                             {% bootstrap_button "add comment" button_type="submit" button_class="btn-outline-primary" %}
                         </form>
+
                     </div>
                 </div>
             </div>
         </div>
+
         {% for comment in comments %}
+
             <div class="container">
                 <div class="row d-flex justify-content-center">
                     <div class="col-md-12 col-lg-10 col-xl-6">
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="d-flex flex-start align-items-center">
+
                                     {% if comment.user.profile.photo %}
+
                                         {% thumbnail comment.user.profile.photo "40x40" crop="100%" as im %}
                                             <a href="{% url 'user_detail' comment.user %}">
                                                 <img class="item-img rounded-circle shadow-1-strong me-3"
                                                      src="{{ im.url }}" alt="" />
                                             </a>
+
                                     {% else %}
+
                                         <a href="{% url 'user_detail' comment.user %}">
                                             <img class="item-img rounded-circle shadow-1-strong me-3"
                                                  src="{% static 'images/no_image.jpg' %}" alt="" width="40" height="40" />
                                         </a>
+
                                     {% endif %}
+
                                     <div class="w-100">
                                         <div class="d-flex justify-content-between">
                                             <p class="fw-bold mb-1">
@@ -88,8 +113,10 @@
                                             </p>
                                             <p class="text-secondary mb-0">{{ comment.update|naturaltime }}</p>
                                         </div>
+
                                         <p class="mb-0">{{ comment.body }}</p>
                                     </div>
+
                                     {% if request.user == comment.user %}
                                         <form action="{% url 'album:comment_delete' comment.id %}" method="post">
                                             {% csrf_token %}
@@ -99,17 +126,22 @@
                                             </button>
                                         </form>
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
         {% endfor %}
     </section>
+
 {% endblock %}
 
+
 {% block domready %}
+
     window.addEventListener('scroll', function (e) {
         const margin = document.body.clientHeight - window.innerHeight - 200;
         if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
@@ -134,7 +166,6 @@
     });
 
     const scrollEvenet = new Event('scroll');
-{#    window.dispatchEvent(scrollEvenet);#}
 
     const url = '{% url "album:like" %}';
     var options = {
@@ -146,6 +177,7 @@
     document.querySelector('button.like').addEventListener('click', function(e){
         e.preventDefault();
         var likeButton = this;
+        var icon = likeButton.querySelector('i');
 
         var formData = new FormData();
         formData.append('id', likeButton.dataset.id);
@@ -157,16 +189,19 @@
         .then(data => {
             if (data['status'] === 'ok')
             {
-                var previousAction = likeButton.dataset.action;
-
-                var action = previousAction === 'like' ? 'unlike' : 'like';
-                likeButton.dataset.action = action;
-                likeButton.innerHTML = action;
+                if (likeButton.dataset.action == 'like') {
+                    likeButton.dataset.action = 'unlike';
+                    icon.className = 'fa-solid fa-heart-crack';
+                } else {
+                    likeButton.dataset.action = 'like';
+                    icon.className = 'fa-solid fa-heart';
+                }
 
                 var likeCount = document.querySelector('span.count .total');
                 var totalLikes = parseInt(likeCount.innerHTML);
-                likeCount.innerHTML = previousAction === 'like' ? totalLikes + 1 : totalLikes - 1;
+                likeCount.innerHTML = likeButton.dataset.action == 'like' ? totalLikes - 1 : totalLikes + 1;
             }
         })
     });
+
 {% endblock %}

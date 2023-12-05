@@ -48,13 +48,17 @@ def album_detail(request, id):
                       'album/images_list.html',
                       {'images': images})
     comments = Comment.objects.filter(album=album)
-    return render(request,
-                  "album/detail.html",
-                  {'images': images,
-                   'album': album,
-                   'total_views': total_views,
-                   'comment_form': form,
-                   'comments': comments})
+    context = {'images': images,
+               'album': album,
+               'total_views': total_views,
+               'comment_form': form,
+               'comments': comments}
+    if album.status != 'PR':
+        return render(request, "album/detail.html", context)
+    elif album.status == 'PR' and request.user == album.author:
+        return render(request, "album/detail.html", context)
+    else:
+        return redirect('/')
 
 
 @login_required

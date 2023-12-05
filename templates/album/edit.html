@@ -6,56 +6,74 @@
 	Edit album
 {% endblock %}
 
+
 {% block content %}
+
     <div class="container border border-start-0 border-end-0">
         <div class="d-flex align-items-center" style="padding-left: 82px;">
             <div class="col-4 p-5">
+
                 <form action="{% url 'album:album_edit' album.id %}" method="post" class="form" enctype="multipart/form-data">
                     {% csrf_token %}
                     {% bootstrap_form form %}
                     {% bootstrap_form add_image_form %}
                     {% bootstrap_button "Save" button_type="submit" %}
                 </form>
+
                 <p></p>
                 <p><a class="btn btn-outline-danger" href="{% url 'album:album_delete' album.id %}" role="button">Delete</a></p>
+
             </div>
         </div>
     </div>
+
     <div class="container">
         <div class="row">
             <div class="col">
                 <div class="tm-img-gallery gallery-one">
                     <div class="tm-img-gallery-info-container">
                         <div style="display: flex; flex-wrap: wrap; justify-content: center">
+
                             {% for image in album.images.all %}
+
                                 {% if image.image %}
+
                                     <div style="margin: 1em; text-align: center; position: relative;">
                                         <div class="grid-item">
                                             <figure class="effect-bubba">
                                                 <figcaption class="img">
+
                                                     <a href="{{ image.image.url }}">
                                                         <img src="{% thumbnail image.image 200x0 quality=100 %}" alt="Image" class="img-fluid tm-img">
                                                     </a>
+
                                                     <div style="display: flex; justify-content: center;">
                                                         <div class="text-end">
+
                                                             <form action="{% url 'album:image_delete' image.id %}" method="post">
                                                                 {% csrf_token %}
                                                                 <button type="submit" href="{% url 'album:image_delete' image.id %}" class="dropdown-item text-danger-emphasis" style="background: none; border: none; font-size: 15px">
                                                                     Delete
                                                                 </button>
                                                             </form>
+
                                                         </div>
                                                     </div>
+
                                                 </figcaption>
                                             </figure>
                                         </div>
                                     </div>
+
                                 {% endif %}
+
                             {% endfor %}
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock %}

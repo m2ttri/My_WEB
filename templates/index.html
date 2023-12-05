@@ -5,13 +5,18 @@
 	Main page
 {% endblock %}
 
+
 {% block content %}
+
     <div id="albums-list">
         {% include 'album/list.html' %}
     </div>
+
 {% endblock %}
 
+
 {% block domready %}
+
     window.addEventListener('scroll', function (e) {
         const margin = document.body.clientHeight - window.innerHeight - 200;
         if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
@@ -34,4 +39,5 @@
             })
         }
     });
+
 {% endblock %}

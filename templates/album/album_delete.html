@@ -5,30 +5,38 @@
     Delete album
 {% endblock title %}
 
+
 {% block content %}
+
     <div class="container py-5">
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-md-8 col-lg-6 col-xl-4">
                 <div class="card bg-dark text-white" style="border-radius: 1rem;">
                     <div class="card-body p-5 text-center">
                         <div class="mb-md-5 mt-md-4 pb-5">
+
                             <h2 class="fw-bold mb-2 text-uppercase">Delete album</h2>
                             <p class="text-white-50 mb-5">Are you want to delete the album
-                                <a href="{% url 'album:album_detail' album.id %}" class="fw-bold">{{ album.title }}</a>
-                                ?
+                                <a href="{% url 'album:album_detail' album.id %}" class="fw-bold">
+                                    {{ album.title }}
+                                </a>?
                             </p>
+
                             <form action="{% url 'album:album_delete' album.id %}" method="post" class="form">
                                 {% csrf_token %}
                                 {% bootstrap_button "Delete" button_type="submit" button_class="btn-danger" %}
                             </form>
+
                             <form action="{% url 'user_detail' request.user.username %}" method="post" class="form">
                                 {% csrf_token %}
                                 {% bootstrap_button "Cancel" button_type="submit" button_class="btn-outline-secondary" %}
                             </form>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 {% endblock %}
