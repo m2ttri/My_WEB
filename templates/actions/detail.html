@@ -48,11 +48,12 @@
                                                 <span class="mb-0">{{ action.verb }}</span>
 
                                                 {% with target=action.target %}
-                                                    <a href="{% url 'album:album_detail' target.id %}">{{ target }}</a>
+                                                    <a href="{% url 'album:album_detail' target.id %}"
+                                                       style="text-decoration: none">{{ target }}</a>
                                                 {% endwith %}
                                             </div>
 
-                                            <span class="text-secondary mb-0">{{ action.created|naturaltime }}</span>
+                                            <small class="text-secondary mb-0">{{ action.created|naturalday }}</small>
 
                                         {% endwith %}
 

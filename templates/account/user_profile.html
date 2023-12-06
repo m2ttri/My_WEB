@@ -38,7 +38,7 @@
                     {% if request.user.is_authenticated and request.user != user %}
                         <a href="#" data-id="{{ user.id }}"
                            data-action="{% if request.user in user.followers.all %}un{% endif %}follow"
-                           class="btn btn-primary follow button">
+                           class="btn btn-primary follow button fw-bold">
                             {% if request.user not in user.followers.all %}
                                 follow
                             {% else %}

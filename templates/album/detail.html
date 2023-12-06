@@ -18,7 +18,7 @@
                 <h1 class="text-warning">{{ album.title }}</h1>
                 <small class="text-muted">by <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a></small>
                 <br>
-                <small class="text-muted">last update {{ album.publish|naturaltime }}</small>
+                <small class="text-muted">last update {{ album.publish|naturalday }}</small>
 
                 {% if request.user == album.author %}
                     <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
@@ -111,7 +111,7 @@
                                             <p class="fw-bold mb-1">
                                                 <a href="{% url 'user_detail' comment.user %}" style="text-decoration: none; color: #ffda6a">{{ comment.user }}</a>
                                             </p>
-                                            <p class="text-secondary mb-0">{{ comment.update|naturaltime }}</p>
+                                            <small class="text-secondary mb-0">{{ comment.update|naturaltime}}</small>
                                         </div>
 
                                         <p class="mb-0">{{ comment.body }}</p>
