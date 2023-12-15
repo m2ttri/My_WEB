@@ -23,8 +23,7 @@
                 {% if request.user == album.author %}
                     <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
                 {% endif %}
-
-                <p></p>
+                <a href="{% url 'album:album_download' album.id %}">download</a>
 
                 <p>{{ total_views }} view{{ total_views|pluralize }}</p>
 

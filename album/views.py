@@ -1,10 +1,13 @@
+import os
 import redis
+import zipfile
+from django.views import View
 from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.views.generic.edit import DeleteView
-from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.http import FileResponse, JsonResponse, HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from actions.utils import create_action
@@ -17,48 +20,51 @@ r = redis.Redis(host=settings.REDIS_HOST,
                 db=settings.REDIS_DB)
 
 
-def album_detail(request, id):
-    album = get_object_or_404(Album, id=id)
-    total_views = r.incr(f'album:{album.id}:views')
-    images = album.images.all()
-    paginator = Paginator(images, 10)
-    page = request.GET.get('page')
-    images_only = request.GET.get('images_only')
-    try:
-        images = paginator.page(page)
-    except PageNotAnInteger:
-        images = paginator.page(1)
-    except EmptyPage:
+class AlbumDetailView(View):
+    def get(self, request, id, *args, **kwargs):
+        album = get_object_or_404(Album, id=id)
+        total_views = r.incr(f'album:{album.id}:views')
+        images = album.images.all()
+        paginator = Paginator(images, 10)
+        page = request.GET.get('page')
+        images_only = request.GET.get('images_only')
+        try:
+            images = paginator.page(page)
+        except PageNotAnInteger:
+            images = paginator.page(1)
+        except EmptyPage:
+            if images_only:
+                return HttpResponse('')
+            images = paginator.page(paginator.num_pages)
         if images_only:
-            return HttpResponse('')
-        images = paginator.page(paginator.num_pages)
-    if request.method == 'POST':
+            return render(request,
+                          'album/images_list.html',
+                          {'images': images})
+        comments = Comment.objects.filter(album=album)
+        context = {'images': images,
+                   'album': album,
+                   'total_views': total_views,
+                   'comment_form': CommentForm(),
+                   'comments': comments}
+        if album.status != 'PR':
+            return render(request,
+                          'album/detail.html', context)
+        elif album.status == 'PR' and request.user == album.author:
+            return render(request,
+                          'album/detail.html', context)
+        else:
+            return redirect('/')
+
+    def post(self, request, id, *args, **kwargs):
         form = CommentForm(data=request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
-            comment.album = album
+            comment.album = get_object_or_404(Album, id=id)
             comment.user = request.user
             comment.save()
-            return redirect('album:album_detail',
-                            album.id)
-    else:
-        form = CommentForm()
-    if images_only:
-        return render(request,
-                      'album/images_list.html',
-                      {'images': images})
-    comments = Comment.objects.filter(album=album)
-    context = {'images': images,
-               'album': album,
-               'total_views': total_views,
-               'comment_form': form,
-               'comments': comments}
-    if album.status != 'PR':
-        return render(request, "album/detail.html", context)
-    elif album.status == 'PR' and request.user == album.author:
-        return render(request, "album/detail.html", context)
-    else:
-        return redirect('/')
+            return redirect('album:album_detail', id)
+        else:
+            return self.get(request, id, *args, **kwargs)
 
 
 @login_required
@@ -140,23 +146,45 @@ def album_search(request):
         form = SearchForm(request.GET)
         if form.is_valid():
             query = form.cleaned_data['query']
+            search_vector = SearchVector('title')
+            search_query = SearchQuery(query)
             results = Album.published.annotate(
-                similarity=TrigramSimilarity('title', query), ).filter(
-                similarity__gt=0.1).order_by('-similarity')
+                search=search_vector,
+                rank=SearchRank(search_vector, search_query)).filter(search=search_query).order_by('-rank')
             for album in results:
                 album.total_views = r.get(f'album:{album.id}:views').decode()
             return render(request,
                           'album/search.html',
-                          {'query': query,
-                           'results': results})
+                          {'query': query, 'results': results})
     return render(request,
                   'base.html',
                   {'form': form})
 
 
+def create_zip(album):
+    zip_file_name = f'{album.title.replace(" ", "_")}.zip'
+    zip_file_path = os.path.join(settings.MEDIA_ROOT, zip_file_name)
+    with zipfile.ZipFile(zip_file_path, 'w') as zipf:
+        for image in album.images.all():
+            image_path = os.path.join(settings.MEDIA_ROOT,
+                                      str(image.image))
+            zipf.write(image_path,
+                       arcname=os.path.basename(image_path))
+    return zip_file_path
+
+
 def download_image(request, image_id):
     img = Image.objects.get(id=image_id)
-    response = FileResponse(open(img.image.path, 'rb'), as_attachment=True)
+    response = FileResponse(open(img.image.path, 'rb'),
+                            as_attachment=True)
+    return response
+
+
+def download_album(request, album_id):
+    album = Album.objects.get(id=album_id)
+    zip_file = create_zip(album)
+    response = FileResponse(open(zip_file, 'rb'),
+                            as_attachment=True)
     return response
 
 

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from django.contrib.auth.views import LoginView
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib import messages
@@ -8,9 +9,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse, HttpResponse
 from album.models import Album
 from .models import Profile, Contact
-from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm
+from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, CustomAuthenticationForm
 from actions.models import Action
 from album.views import r
+
+
+class CustomLoginView(LoginView):
+    authentication_form = CustomAuthenticationForm
 
 
 @login_required
@@ -54,12 +59,10 @@ def user_detail(request, username):
     if albums_only:
         return render(request,
                       'account/user_albums_list.html',
-                      {'user': user,
-                       'albums': albums})
+                      {'user': user, 'albums': albums})
     return render(request,
                   'account/user_profile.html',
-                  {'user': user,
-                   'albums': albums})
+                  {'user': user, 'albums': albums})
 
 
 def register(request):
