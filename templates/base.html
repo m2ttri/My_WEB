@@ -17,10 +17,10 @@
 </head>
 
 <body>
-
     <header class="p-3 mb-3">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+            
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-2 link-warning">HOME</a></li>
                     {% if request.user.is_authenticated %}
@@ -28,19 +28,25 @@
                         <li><a href="{% url 'actions' request.user.username %}" class="nav-link px-2 link-body-emphasis">Subscriptions</a></li>
                     {% endif %}
                 </ul>
-                <form action="{% url 'album:album_search' %}" method="get" class="col-12 col-lg-3 mb-3 mb-lg-0 me-lg-3" role="search">
+            
+                <form action="{% url 'album:album_search' %}" method="get" class="col-12 col-lg-3 mb-3 mb-lg-0 me-lg-1" role="search">
                     {% bootstrap_form search_form layout='inline' %}
                 </form>
+            
                 {% if request.user.is_authenticated %}
-                    <div class="dropdown text-end">
-                        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="{{ user.profile.photo.url }}" alt="mdo" width="32" height="32" class="rounded-circle">
-                        </a>
-                        <ul class="dropdown-menu text-small">
-                            <li><a class="dropdown-item" href="{% url 'album:album_create' %}">New album...</a></li>
+                    <a class="btn btn-outline-warning me-1" href="{% url 'album:album_create' %}" role="button">new album</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ request.user.username }}
+                        </button>
+                        <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'edit' %}">Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
+                            {% if request.user.is_staff %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'admin:index' %}">ADMIN</a></li>
+                            {% endif %}
                         </ul>
                     </div>
                 {% else %}
@@ -49,6 +55,7 @@
                         <a class="btn btn-warning" href="{% url 'register' %}" role="button">Sign up</a>
                     </div>
                 {% endif %}
+            
             </div>
         </div>
     </header>
@@ -73,7 +80,6 @@
     <script src="//cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     <script src="https://www.atlasestateagents.co.uk/javascript/tether.min.js"></script>
     <script src="https://kit.fontawesome.com/f97db90111.js" crossorigin="anonymous"></script>
-
     <script>
         let page = 1;
         let emptyPage = false;
@@ -108,7 +114,6 @@
             setupGallery();
         });
     </script>
-
     <script>
         const csrftoken = Cookies.get('csrftoken');
         document.addEventListener('DOMContentLoaded', (event) => {
@@ -116,6 +121,5 @@
             {% endblock %}
         })
     </script>
-
 </body>
 </html>

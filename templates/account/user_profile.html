@@ -6,24 +6,18 @@
     Profile of {{ user }}
 {% endblock %}
 
-
 {% block content %}
-
-    <div class="container border border-top-0 border-start-0 border-end-0">
+    
+    <div class="container border border-start-0 border-end-0">
         <div class="d-flex align-items-center" style="padding-left: 82px;">
-
+        
             <div class="p-2">
                 {% if user.profile.photo %}
-                    <img id="preview" class="rounded-circle py-4" width="200px"
-                         src="{{ user.profile.photo.url }}" alt="ava">
-
+                    <img id="preview" class="rounded-circle py-4" width="200px" src="{{ user.profile.photo.url }}" alt="ava">
                 {% else %}
-                    <img id="preview" class="rounded-circle py-4" width="200px"
-						src="{% static 'images/no_image.jpg' %}" alt="ava">
-
+                    <img id="preview" class="rounded-circle py-4" width="200px" src="{% static 'images/no_image.jpg' %}" alt="ava">
                 {% endif %}
             </div>
-
             <div class="p-5">
                 <h1 class="text-warning">{{ user.username }}</h1>
                 <p>
@@ -36,8 +30,7 @@
                 </p>
                 <p>
                     {% if request.user.is_authenticated and request.user != user %}
-                        <a href="#" data-id="{{ user.id }}"
-                           data-action="{% if request.user in user.followers.all %}un{% endif %}follow"
+                        <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow"
                            class="btn btn-primary follow button fw-bold">
                             {% if request.user not in user.followers.all %}
                                 follow
@@ -48,19 +41,18 @@
                     {% endif %}
                 </p>
             </div>
-
+        
         </div>
     </div>
 
     <div id="albums-list">
         {% include 'account/user_albums_list.html' %}
     </div>
-
+    
 {% endblock %}
 
 
 {% block domready %}
-
 	var url = '{% url "user_follow" %}';
     var options = {
         method: 'POST',
@@ -117,5 +109,4 @@
             })
         }
     });
-
 {% endblock %}

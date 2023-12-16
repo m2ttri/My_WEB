@@ -5,16 +5,12 @@
 	Main page
 {% endblock %}
 
-
 {% block content %}
-
-    <section class="py-5 text-center text-warning container">
+    
+    <section class="py-5 text-center text-warning container border border-start-0 border-end-0">
         <div class="row py-lg-5">
             <div class="col-lg-8 col-md-8 mx-auto">
                 <h1 class="fw-light">Create albums and share them with everyone</h1>
-                <p>
-                    <a href="{% url 'album:album_create' %}" class="btn btn-outline-danger my-2 fw-medium">create album</a>
-                </p>
             </div>
         </div>
     </section>
@@ -22,12 +18,11 @@
     <div id="albums-list">
         {% include 'album/list.html' %}
     </div>
-
+    
 {% endblock %}
 
 
 {% block domready %}
-
     window.addEventListener('scroll', function (e) {
         const margin = document.body.clientHeight - window.innerHeight - 200;
         if(window.pageYOffset > margin && !emptyPage && !blockRequest) {
@@ -50,5 +45,4 @@
             })
         }
     });
-
 {% endblock %}

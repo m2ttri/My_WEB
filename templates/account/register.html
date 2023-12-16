@@ -5,20 +5,16 @@
 	Registration
 {% endblock %}
 
-
 {% block content %}
-
-    <div class="container py-5">
+    <div class="container py-5 border border-start-0 border-end-0 border-bottom-0">
         <div class="row d-flex justify-content-center align-items-center">
             <div class="col-12 col-md-8 col-lg-6 col-xl-4">
                 <div class="card bg-dark text-white" style="border-radius: 1rem;">
                     <div class="card-body p-5 text-center">
-
                         <div class="mb-md-5 mt-md-4 pb-5">
+                        
                             <h2 class="fw-bold mb-2 text-uppercase">Create account</h2>
-
                             <p class="text-white-50 mb-5">Use the following form to create account</p>
-
                             <form action="{% url 'register' %}" method="post" class="form">
                                 {% csrf_token %}
                                 {% for field in user_form %}
@@ -26,12 +22,11 @@
                                 {% endfor %}
                                 {% bootstrap_button "Create" button_type="submit" %}
                             </form>
+                        
                         </div>
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 {% endblock %}
