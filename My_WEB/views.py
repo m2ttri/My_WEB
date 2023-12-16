@@ -9,7 +9,7 @@ def index(request):
     albums = Album.published.all()
     for album in albums:
         album.total_views = r.get(f'album:{album.id}:views').decode()
-    paginator = Paginator(albums, 8)
+    paginator = Paginator(albums, 6)
     page = request.GET.get('page')
     albums_only = request.GET.get('albums_only')
     try:
