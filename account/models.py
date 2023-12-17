@@ -8,7 +8,8 @@ class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE)
     photo = models.ImageField(upload_to='users/',
-                              blank=True)
+                              blank=True,
+                              default='users/no_image.jpg')
     created = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

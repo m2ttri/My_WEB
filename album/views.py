@@ -23,7 +23,7 @@ def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
     total_views = r.incr(f'album:{album.id}:views')
     images = album.images.all()
-    paginator = Paginator(images, 12)
+    paginator = Paginator(images, 10)
     page = request.GET.get('page')
     images_only = request.GET.get('images_only')
     try:

@@ -9,41 +9,63 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container border border-start-0 border-end-0 border-bottom-0">
-        <div class="d-flex align-items-center" style="padding-left: 82px;">
-            <div class="col-4 p-5">
 
-                <h1 class="text-warning">{{ album.title }}</h1>
-                <small class="text-muted">by <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a></small>
-                <br>
-                <small class="text-muted">last update {{ album.publish|naturalday }}</small>
-                {% if request.user == album.author %}
-                    <p><a href="{% url 'album:album_edit' album.id %}">edit</a></p>
-                {% endif %}
-                <a href="{% url 'album:album_download' album.id %}">download</a>
-                <p>{{ total_views }} view{{ total_views|pluralize }}</p>
-                <p>
-                    {% with total_likes=album.users_like.count users_like=album.users_like.all %}
-                        {% if request.user.is_authenticated %}
-                            <button data-id="{{ album.id }}"
-                                    data-action="{% if request.user in users_like %}unlike{% else %}like{% endif %}"
-                                    class="btn btn-primary fw-bold like button" id="like-button">
-                                <span class="count">
-                                    <span class="total">{{ total_likes }}</span>
-                                </span>
-                                {% if request.user not in users_like %}
-                                    <i class="fa-solid fa-heart"></i>
-                                {% else %}
-                                    <i class="fa-solid fa-heart-crack"></i>
-                                {% endif %}
-                            </button>
-                        {% else %}
-                            <span class="total">{{ total_likes }}</span>
-                            <i class="fa-solid fa-heart"></i>
-                        {% endif %}
-                    {% endwith %}
-                </p>
-            
+    <div class="container border border-start-0 border-end-0 border-bottom-0">
+        <div class="row mt-4 d-flex justify-content-center">
+            <div class="col-md-12 col-lg-10 col-xl-6">
+                <div class="card mb-1">
+                    <div class="card-body">
+                        <div class="d-flex flex-start align-items-center">
+
+                            {% thumbnail album.author.profile.photo "80x80" crop="100%" as im %}
+                                <a href="{% url 'user_detail' album.author %}">
+                                    <img class="item-img rounded-circle shadow-1-strong me-3" src="{{ im.url }}" alt="" />
+                                </a>
+                        
+                            <div class="w-100">
+                                <p><h1 class="d-flex text-warning mb-0 ms-3">{{ album.title }}</h1></p>
+                                <div class="btn-group mb-0 ms-3">
+                                    {% with total_likes=album.users_like.count users_like=album.users_like.all %}
+                                        {% if request.user.is_authenticated %}
+                                            <button data-id="{{ album.id }}"
+                                                    data-action="{% if request.user in users_like %}unlike{% else %}like{% endif %}"
+                                                    class="btn btn-outline-light btn-sm px-3 fw-bold like button" id="like-button">
+                                                <span class="count">
+                                                    <span class="total">{{ total_likes }}</span>
+                                                </span>
+                                                {% if request.user not in users_like %}
+                                                    <i class="fa-solid fa-heart"></i>
+                                                {% else %}
+                                                    <i class="fa-solid fa-heart-crack"></i>
+                                                {% endif %}
+                                            </button>
+                                        {% else %}
+                                            <span class="total">{{ total_likes }}</span>
+                                            <i class="fa-solid fa-heart"></i>
+                                        {% endif %}
+                                    {% endwith %}
+                                    <a href="{% url 'album:album_download' album.id %}" class="btn btn-outline-light btn-sm px-3">Download</a>
+                                    {% if request.user == album.author %}
+                                        <button type="button" class="btn btn-sm btn-outline-light px-3 dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="visually-hidden">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item text-warning-emphasis" href="{% url 'album:album_edit' album.id %}">Edit</a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="{% url 'album:album_delete' album.id %}">Delete</a></li>
+                                        </ul>
+                                    {% endif %}
+                                </div>
+                                <div class="text-muted mb-0 ms-3">
+                                    <small>{{ album.publish|date:"d M Y" }}</small>
+                                    <small><i class="fa-solid fa-circle fa-2xs"></i></small>
+                                    <small>{{ total_views }} view{{ total_views|pluralize }}</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -52,50 +74,47 @@
         {% include 'album/images_list.html' %}
     </div>
 
-    <section>
-        <div class="container py-3">
-            <div class="row justify-content-center">
-                <div class="col-6">
-                    <div class="form-outline">
 
-                        <form action="{% url 'album:album_detail' album.id %}" method="post">
-                            {% csrf_token %}
-                            {% bootstrap_form comment_form show_label=False %}
-                            {% bootstrap_button "add comment" button_type="submit" button_class="btn-outline-primary" %}
-                        </form>
+    <div class="container py-3">
+        <div class="row justify-content-center">
+            <div class="col-md-12 col-lg-10 col-xl-6">
+                <div class="form-outline">
 
-                    </div>
+                    <form action="{% url 'album:album_detail' album.id %}" method="post">
+                        {% csrf_token %}
+                        {% bootstrap_form comment_form show_label=False %}
+                        {% bootstrap_button "Post" button_type="submit" size='sm' extra_classes='px-4' button_class="btn-outline-success" %}
+                    </form>
+
                 </div>
             </div>
         </div>
+    </div>
 
-        {% for comment in comments %}
-            <div class="container">
-                <div class="row d-flex justify-content-center">
+
+        <div class="container">
+            <div class="row d-flex justify-content-center">
+                {% for comment in comments %}
                     <div class="col-md-12 col-lg-10 col-xl-6">
                         <div class="card mb-3">
                             <div class="card-body">
                                 <div class="d-flex flex-start align-items-center">
-                                
-                                    {% if comment.user.profile.photo %}
-                                        {% thumbnail comment.user.profile.photo "40x40" crop="100%" as im %}
-                                            <a href="{% url 'user_detail' comment.user %}">
-                                                <img class="item-img rounded-circle shadow-1-strong me-3" src="{{ im.url }}" alt="" />
-                                            </a>
-                                    {% else %}
+
+                                    {% thumbnail comment.user.profile.photo "40x40" crop="100%" as im %}
                                         <a href="{% url 'user_detail' comment.user %}">
-                                            <img class="item-img rounded-circle shadow-1-strong me-3" src="{% static 'images/no_image.jpg' %}" alt="" width="40" height="40" />
+                                            <img class="item-img rounded-circle shadow-1-strong me-3" src="{{ im.url }}" alt="" />
                                         </a>
-                                    {% endif %}
+
                                     <div class="w-100">
                                         <div class="d-flex justify-content-between">
-                                            <p class="fw-bold mb-1">
+                                            <p class="fw-bold mb-0 ms-3">
                                                 <a href="{% url 'user_detail' comment.user %}" style="text-decoration: none; color: #ffda6a">{{ comment.user }}</a>
                                             </p>
                                             <small class="text-secondary mb-0">{{ comment.update|naturaltime}}</small>
                                         </div>
-                                        <p class="mb-0">{{ comment.body }}</p>
+                                        <p class="mb-0 ms-3">{{ comment.body }}</p>
                                     </div>
+
                                     {% if request.user == comment.user %}
                                         <form action="{% url 'album:comment_delete' comment.id %}" method="post">
                                             {% csrf_token %}
@@ -105,15 +124,16 @@
                                             </button>
                                         </form>
                                     {% endif %}
-                                
+
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </section>
+        </div>
+
+
 {% endblock %}
 
 {% block domready %}

@@ -12,12 +12,9 @@
         <div class="d-flex align-items-center" style="padding-left: 82px;">
         
             <div class="p-2">
-                {% if user.profile.photo %}
-                    <img id="preview" class="rounded-circle py-4" width="200px" src="{{ user.profile.photo.url }}" alt="ava">
-                {% else %}
-                    <img id="preview" class="rounded-circle py-4" width="200px" src="{% static 'images/no_image.jpg' %}" alt="ava">
-                {% endif %}
+                <img id="preview" src="{% thumbnail user.profile.photo 200x200 crop="smart" %}" alt="Image" class="rounded-circle py-4">
             </div>
+        
             <div class="p-5">
                 <h1 class="text-warning">{{ user.username }}</h1>
                 <p>

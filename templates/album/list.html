@@ -1,17 +1,21 @@
 {% load static %}
 {% load thumbnail %}
 
-<div class="album py-5">
+<div class="album">
     <div class="container">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-6 justify-content-center">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-5 justify-content-center">
             {% for album in albums %}
                 {% with first_image=album.images.all|first %}
                     <div class="col">
                         <div class="card-group">
-                            <div class="card">
+                            <div class="card mt-3">
                             
                                 <a href="{% url 'album:album_detail' album.id %}">
-                                    <img src="{% thumbnail first_image.image 195x300 crop="smart" %}" alt="">
+                                    {% if first_image %}
+                                        <img src="{% thumbnail first_image.image 200x200 crop="smart" %}" alt="">
+                                    {% else %}
+                                        <img src="{% static 'images/no_image.jpg' %}" alt="">
+                                    {% endif %}
                                 </a>
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
@@ -22,9 +26,9 @@
                                         <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a>
                                     </div>
                                     <div class="d-flex justify-content-between">
-                                        <small class="text-muted">{{ album.total_views }}view{{ album.total_views|pluralize }}</small>
+                                        <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
                                         {% with album.comments.count as total_comments %}
-                                            <span class="text-muted"><i class="fa-solid fa-comment-dots"></i> {{ total_comments }}</span>
+                                            <span class="text-muted">{{ total_comments }} <i class="fa-solid fa-comment fa-sm"></i></span>
                                         {% endwith %}
                                         {% with total_likes=album.users_like.count users_like=album.users_like.all %}
                                             <span class="count">
@@ -34,7 +38,7 @@
                                         {% endwith %}        
                                     </div>
                                 </div>
-                            
+
                             </div>
                         </div>
                     </div>
@@ -43,34 +47,3 @@
         </div>
     </div>
 </div>
-
-
-{#                        {% if first_image %}#}
-{#                            <a href="{% url 'album:album_detail' album.id %}">#}
-{#                                <img src="{% thumbnail first_image.image 305x300 crop="smart" %}" alt="">#}
-{#                            </a>#}
-{#                        {% else %}#}
-{#                            <img src="{% static 'images/no_image.jpg' %}" width="100%" alt="">#}
-{#                        {% endif %}#}
-{#                        <div class="card shadow-sm">#}
-{#                            <div class="card-body">#}
-{#                                <div class="d-flex justify-content-between">#}
-{#                                    <p class="card-text fw-bold">#}
-{#                                        <a href="{% url 'album:album_detail' album.id %}" style="text-decoration: none; color: #ffc107;">{{ album.title }}</a>#}
-{#                                    </p>#}
-{#                                    <a href="{% url 'user_detail' album.author %}" style="text-decoration: none">{{ album.author }}</a>#}
-{#                                </div>#}
-{#                                <div class="d-flex justify-content-between">#}
-{#                                    <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>#}
-{#                                    {% with album.comments.count as total_comments %}#}
-{#                                        <span class="text-muted"><i class="fa-solid fa-comment-dots"></i> {{ total_comments }}</span>#}
-{#                                    {% endwith %}#}
-{#                                    {% with total_likes=album.users_like.count users_like=album.users_like.all %}#}
-{#                                        <span class="count">#}
-{#                                                <span class="total">{{ total_likes }}</span>#}
-{#                                                <i class="fa-solid fa-heart text-danger"></i>#}
-{#                                            </span>#}
-{#                                    {% endwith %}#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}

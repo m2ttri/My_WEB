@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 {% load django_bootstrap5 %}
 
 {% block title %}
     Delete album
-{% endblock title %}
+{% endblock %}
 
 {% block content %}
     <div class="container py-5 border border-start-0 border-end-0 border-bottom-0">
@@ -14,20 +14,14 @@
                         <div class="mb-md-5 mt-md-4 pb-5">
 
                             <h2 class="fw-bold mb-2 text-uppercase">Delete album</h2>
-                            <p class="text-white-50 mb-5">Are you want to delete the album
-                                <a href="{% url 'album:album_detail' album.id %}" class="fw-bold">
-                                    {{ album.title }}
-                                </a>?
-                            </p>
+                            <p class="text-white-50 mb-5">Are you sure?</p>
+
+                            <p><a class="btn btn-outline-light px-5" 
+                                  href="{% url 'album:album_edit' album.id  %}" role="button">Cancel</a></p>
 
                             <form action="{% url 'album:album_delete' album.id %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_button "Delete" button_type="submit" button_class="btn-danger" %}
-                            </form>
-
-                            <form action="{% url 'user_detail' request.user.username %}" method="post" class="form">
-                                {% csrf_token %}
-                                {% bootstrap_button "Cancel" button_type="submit" button_class="btn-outline-secondary" %}
+                                {% bootstrap_button "Delete" button_type="submit" extra_classes='px-5' button_class="btn-danger" %}
                             </form>
 
                         </div>

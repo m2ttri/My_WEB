@@ -17,7 +17,7 @@ class Album(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL,
                                related_name='album',
                                on_delete=models.CASCADE)
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=18)
     publish = models.DateTimeField(default=timezone.now)
     update = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=2,

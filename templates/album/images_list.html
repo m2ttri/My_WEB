@@ -2,24 +2,20 @@
 
 <div class="album py-2">
     <div class="container ">
-        <div class="row row-cols-6 g-3 justify-content-center">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 row-cols-lg-5 g-3 justify-content-center">
             {% for image in images %}
                 {% if image.image %}
                     <div class="col gallery-one">
                         <div class="grid-item">
-                            
-                            <a href="{{ image.image.url }}">
-                                <img src="{% thumbnail image.image 205x200 crop="smart" quality=100 %}" alt="Image" class="img-fluid tm-img">
-                            </a>
-                            <div style="display: flex; justify-content: end;">
-                                <form action="{% url 'album:image_download' image.id %}" method="post">
-                                    {% csrf_token %}
-                                    <button type="submit" href="{% url 'album:image_download' image.id %}" style="background: none; border: none;">
-                                        <i class="fa-solid fa-angle-down"></i>
-                                    </button>
-                                </form>
+                            <div class="card-group">
+                                <div class="card mt-3">
+
+                                    <a href="{{ image.image.url }}">
+                                        <img src="{% thumbnail image.image 200x200 crop="smart" %}" alt="Image" class="img-fluid tm-img">
+                                    </a>
+
+                                </div>
                             </div>
-                            
                         </div>
                     </div>
                 {% endif %}
@@ -27,3 +23,12 @@
         </div>
     </div>
 </div>
+
+{#                            <div style="display: flex; justify-content: end;">#}
+{#                                <form action="{% url 'album:image_download' image.id %}" method="post">#}
+{#                                    {% csrf_token %}#}
+{#                                    <button type="submit" href="{% url 'album:image_download' image.id %}" style="background: none; border: none;">#}
+{#                                        <i class="fa-solid fa-angle-down"></i>#}
+{#                                    </button>#}
+{#                                </form>#}
+{#                            </div>#}

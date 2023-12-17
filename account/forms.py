@@ -5,10 +5,8 @@ from .models import Profile
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    username = UsernameField(
-        label='Username or Email',
-        widget=forms.TextInput(attrs={'autofocus': True})
-    )
+    username = UsernameField(label='Username or Email',
+                             widget=forms.TextInput(attrs={'autofocus': True}))
 
 
 class UserRegistrationForm(forms.ModelForm):
