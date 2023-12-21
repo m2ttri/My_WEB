@@ -25,10 +25,11 @@
                                                 </a>
 
                                             <div class="w-100">
-                                                <p class="fw-bold mb-0 ms-3">
-                                                    <a href="{% url 'user_detail' user %}" style="text-decoration: none; color: #ffda6a">{{ user }}</a>
+                                                <p class="mb-0 ms-3">
+                                                    <a class="fw-bold" href="{% url 'user_detail' user %}" style="text-decoration: none; color: #ffda6a">{{ user }}</a>
+                                                    <span>{{ action.verb }}</span>
                                                 </p>
-                                                <span class="mb-0 ms-3">{{ action.verb }}</span>
+
                                                 {% with target=action.target %}
                                                     <a class="ms-3" href="{% url 'album:album_detail' target.id %}" style="text-decoration: none">{{ target }}</a>
                                                 {% endwith %}

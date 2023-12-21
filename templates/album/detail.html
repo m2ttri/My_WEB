@@ -40,8 +40,12 @@
                                                 {% endif %}
                                             </button>
                                         {% else %}
-                                            <span class="total">{{ total_likes }}</span>
-                                            <i class="fa-solid fa-heart"></i>
+                                            <button class="btn btn-outline-light btn-sm px-3 fw-bold" disabled>
+                                                <span class="count">
+                                                    <span class="total">{{ total_likes }}</span>
+                                                </span>
+                                                <i class="fa-solid fa-heart"></i>
+                                            </button>
                                         {% endif %}
                                     {% endwith %}
                                     <a href="{% url 'album:album_download' album.id %}" class="btn btn-outline-light btn-sm px-3">Download</a>
@@ -83,7 +87,11 @@
                     <form action="{% url 'album:album_detail' album.id %}" method="post">
                         {% csrf_token %}
                         {% bootstrap_form comment_form show_label=False %}
-                        {% bootstrap_button "Post" button_type="submit" size='sm' extra_classes='px-4' button_class="btn-outline-success" %}
+                        {% if request.user.is_authenticated %}
+                            {% bootstrap_button "Post" button_type="submit" size='sm' extra_classes='px-4' button_class="btn-outline-success" %}
+                        {% else %}
+                            {% bootstrap_button "Log-in to post" button_type="submit" size='sm' extra_classes='px-4 disabled' button_class="btn-outline-success" %}
+                        {% endif %}
                     </form>
 
                 </div>
@@ -91,48 +99,46 @@
         </div>
     </div>
 
-
+    {% for comment in comments %}
         <div class="container">
             <div class="row d-flex justify-content-center">
-                {% for comment in comments %}
-                    <div class="col-md-12 col-lg-10 col-xl-6">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="d-flex flex-start align-items-center">
+                <div class="col-md-12 col-lg-10 col-xl-6">
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="d-flex flex-start align-items-center">
 
-                                    {% thumbnail comment.user.profile.photo "40x40" crop="100%" as im %}
-                                        <a href="{% url 'user_detail' comment.user %}">
-                                            <img class="item-img rounded-circle shadow-1-strong me-3" src="{{ im.url }}" alt="" />
-                                        </a>
+                                {% thumbnail comment.user.profile.photo "40x40" crop="100%" as im %}
+                                    <a href="{% url 'user_detail' comment.user %}">
+                                        <img class="item-img rounded-circle shadow-1-strong me-3" src="{{ im.url }}" alt="" />
+                                    </a>
 
-                                    <div class="w-100">
-                                        <div class="d-flex justify-content-between">
-                                            <p class="fw-bold mb-0 ms-3">
-                                                <a href="{% url 'user_detail' comment.user %}" style="text-decoration: none; color: #ffda6a">{{ comment.user }}</a>
-                                            </p>
-                                            <small class="text-secondary mb-0">{{ comment.update|naturaltime}}</small>
-                                        </div>
-                                        <p class="mb-0 ms-3">{{ comment.body }}</p>
+                                <div class="w-100">
+                                    <div class="d-flex justify-content-between">
+                                        <p class="fw-bold mb-0 ms-3">
+                                            <a href="{% url 'user_detail' comment.user %}" style="text-decoration: none; color: #ffda6a">{{ comment.user }}</a>
+                                        </p>
+                                        <small class="text-secondary mb-0">{{ comment.update|naturaltime}}</small>
                                     </div>
-
-                                    {% if request.user == comment.user %}
-                                        <form action="{% url 'album:comment_delete' comment.id %}" method="post">
-                                            {% csrf_token %}
-                                            <button type="submit" href="{% url 'album:comment_delete' comment.id %}"
-                                                    class="text-danger-emphasis position-absolute bottom-0 end-0"
-                                                    style="background: none; border: none; font-size: 14px">Delete
-                                            </button>
-                                        </form>
-                                    {% endif %}
-
+                                    <p class="mb-0 ms-3">{{ comment.body }}</p>
                                 </div>
+
+                                {% if request.user == comment.user %}
+                                    <form action="{% url 'album:comment_delete' comment.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" href="{% url 'album:comment_delete' comment.id %}"
+                                                class="text-danger-emphasis position-absolute bottom-0 end-0"
+                                                style="background: none; border: none; font-size: 14px">Delete
+                                        </button>
+                                    </form>
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
-                {% endfor %}
+                </div>
             </div>
         </div>
-
+    {% endfor %}
 
 {% endblock %}
 

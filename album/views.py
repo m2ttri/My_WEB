@@ -200,7 +200,7 @@ class ImageDeleteView(DeleteView):
     model = Image
 
     def get_success_url(self):
-        return reverse('album:album_edit',
+        return reverse('album:album_detail',
                        kwargs={'id': self.object.album.id})
 
 

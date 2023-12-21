@@ -8,10 +8,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import JsonResponse, HttpResponse
 from album.models import Album
-from .models import Profile, Contact
-from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, CustomAuthenticationForm
 from actions.models import Action
 from album.views import r
+from .models import Profile, Contact
+from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, CustomAuthenticationForm
+from .tasks import send_welcome_email
 
 
 class CustomLoginView(LoginView):
@@ -73,6 +74,7 @@ def register(request):
             new_user.set_password(user_form.cleaned_data['password'])
             new_user.save()
             Profile.objects.create(user=new_user)
+            # send_welcome_email.delay(new_user.id)
             new_user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, new_user)
             return redirect('edit')

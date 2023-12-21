@@ -133,9 +133,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# STATICFILES_DIRS = [
-#     BASE_DIR / 'account/../static',
-# ]
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 
 MEDIA_URL = 'media/'
@@ -159,7 +159,7 @@ EMAIL_HOST_PASSWORD = 'wbgduhaiuvtzolgv'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 AUTHENTICATION_BACKENDS = [
