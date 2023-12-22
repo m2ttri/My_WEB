@@ -10,7 +10,7 @@
 {% block content %}
     <div class="container py-2">
         {% for action in actions %}
-            {% if action.target is not None %}
+            {% if action.target is not None and action.target.status != 'PR' %}
                 <div class="container">
                     <div class="row d-flex justify-content-center">
                         <div class="col-md-12 col-lg-10 col-xl-6">

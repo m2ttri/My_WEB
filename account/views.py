@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
@@ -10,13 +11,35 @@ from django.http import JsonResponse, HttpResponse
 from album.models import Album
 from actions.models import Action
 from album.views import r
-from .models import Profile, Contact
-from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, CustomAuthenticationForm
-from .tasks import send_welcome_email
+from .models import Profile, Contact, Message
+from .forms import UserRegistrationForm, UserEditForm, ProfileEditForm, CustomAuthenticationForm, MessageForm
+
+# from .tasks import send_welcome_email
 
 
 class CustomLoginView(LoginView):
     authentication_form = CustomAuthenticationForm
+
+
+@login_required
+def send_message(request, username):
+    user = get_object_or_404(User,
+                             username=username,
+                             is_active=True)
+    messages = Message.objects.filter(Q(sender=user, receiver=request.user) | Q(sender=request.user, receiver=user))
+    if request.method == 'POST':
+        form = MessageForm(request.POST)
+        if form.is_valid():
+            message = form.save(commit=False)
+            message.sender = request.user
+            message.receiver = user
+            message.save()
+            return redirect('messages', user)
+    else:
+        form = MessageForm()
+    return render(request,
+                  'account/message_form.html',
+                  {'form': form, 'user': user, 'messages': messages})
 
 
 @login_required
@@ -29,14 +52,12 @@ def get_action(request, username):
                                                            flat=True)
         actions = Action.objects.exclude(
             user=request.user).filter(user_id__in=following_ids)
-        actions = actions.select_related('user',
-                                         'user__profile').prefetch_related('target')
+        actions = actions.select_related('user', 'user__profile').prefetch_related('target')
     else:
         actions = Action.objects.none()
     return render(request,
                   'actions/detail.html',
-                  {'user': user,
-                   'actions': actions})
+                  {'user': user, 'actions': actions})
 
 
 def user_detail(request, username):
@@ -116,11 +137,11 @@ def user_follow(request):
         try:
             user = User.objects.get(id=user_id)
             if action == 'follow':
-                Contact.objects.get_or_create(user_from=request.user,
-                                              user_to=user)
+                Contact.objects.get_or_create(
+                    user_from=request.user, user_to=user)
             else:
-                Contact.objects.filter(user_from=request.user,
-                                       user_to=user).delete()
+                Contact.objects.filter(
+                    user_from=request.user, user_to=user).delete()
             return JsonResponse({'status': 'ok'})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error'})

@@ -15,11 +15,12 @@
 
                             <h2 class="fw-bold mb-2 text-uppercase">Create album</h2>
                             <p class="text-white-50 mb-5">Use the following form to create album</p>
+                            
                             <form action="{% url 'album:album_create' %}" method="post" enctype="multipart/form-data" class="form">
                                 {% csrf_token %}
                                 {% bootstrap_form form show_label=False %}
                                 {% bootstrap_form image_form show_label=False %}
-                                {% bootstrap_button "Create" button_type="submit" %}
+                                {% bootstrap_button "Create" button_type="submit" size='lg' extra_classes='px-5' button_class="btn-outline-light" %}
                             </form>
 
                         </div>

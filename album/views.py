@@ -19,10 +19,24 @@ r = redis.Redis(host=settings.REDIS_HOST,
                 db=settings.REDIS_DB)
 
 
+def comment_form(request, album):
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.album = album
+            comment.user = request.user
+            comment.save()
+            return form, True
+    else:
+        form = CommentForm()
+    return form, False
+
+
 def album_detail(request, id):
     album = get_object_or_404(Album, id=id)
-    total_views = r.incr(f'album:{album.id}:views')
     images = album.images.all()
+    total_views = r.incr(f'album:{album.id}:views')
     paginator = Paginator(images, 10)
     page = request.GET.get('page')
     images_only = request.GET.get('images_only')
@@ -34,33 +48,27 @@ def album_detail(request, id):
         if images_only:
             return HttpResponse('')
         images = paginator.page(paginator.num_pages)
-    if request.method == 'POST':
-        form = CommentForm(data=request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.album = album
-            comment.user = request.user
-            comment.save()
-            return redirect('album:album_detail',
-                            album.id)
-    else:
-        form = CommentForm()
     if images_only:
         return render(request,
                       'album/images_list.html',
                       {'images': images})
+
     comments = Comment.objects.filter(album=album)
-    context = {'images': images,
-               'album': album,
-               'total_views': total_views,
-               'comment_form': form,
-               'comments': comments}
-    if album.status != 'PR':
-        return render(request, "album/detail.html", context)
-    elif album.status == 'PR' and request.user == album.author:
-        return render(request, "album/detail.html", context)
-    else:
+    form, is_redirect = comment_form(request, album)
+    if is_redirect:
+        return redirect('album:album_detail',
+                        album.id)
+    context = {
+        'images': images,
+        'album': album,
+        'total_views': total_views,
+        'comment_form': form,
+        'comments': comments
+    }
+    if album.status == 'PR' and request.user != album.author:
         return redirect('/')
+    else:
+        return render(request, 'album/detail.html', context)
 
 
 @login_required
@@ -85,10 +93,8 @@ def edit_album(request, id):
         form = AlbumEditForm(instance=album)
         add_image_form = MultipleImageForm()
     return render(request,
-                  "album/edit.html",
-                  {"form": form,
-                   "album": album,
-                   'add_image_form': add_image_form})
+                  'album/edit.html',
+                  {'form': form, 'album': album, 'add_image_form': add_image_form})
 
 
 @login_required
@@ -130,8 +136,7 @@ def create_album(request):
         image_form = MultipleImageForm()
     return render(request,
                   "album/create.html",
-                  {"form": form,
-                   "image_form": image_form})
+                  {"form": form, "image_form": image_form})
 
 
 def album_search(request):
@@ -151,8 +156,7 @@ def album_search(request):
                 album.total_views = r.get(f'album:{album.id}:views').decode()
             return render(request,
                           'album/search.html',
-                          {'query': query,
-                           'results': results})
+                          {'query': query, 'results': results})
     return render(request,
                   'base.html',
                   {'form': form})
@@ -170,14 +174,16 @@ def create_zip(album):
 
 def download_image(request, image_id):
     img = Image.objects.get(id=image_id)
-    response = FileResponse(open(img.image.path, 'rb'), as_attachment=True)
+    response = FileResponse(open(img.image.path, 'rb'),
+                            as_attachment=True)
     return response
 
 
 def download_album(request, album_id):
     album = Album.objects.get(id=album_id)
     zip_file = create_zip(album)
-    response = FileResponse(open(zip_file, 'rb'), as_attachment=True)
+    response = FileResponse(open(zip_file, 'rb'),
+                            as_attachment=True)
     return response
 
 

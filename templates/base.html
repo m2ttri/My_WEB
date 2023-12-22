@@ -19,6 +19,7 @@
             width: 100%;
             height: 100%;
         }
+
         body {
             display: flex;
             flex-direction: column;
@@ -33,6 +34,11 @@
             position: relative;
             width: 100%;
         }
+
+        .card-body-message {
+            height: 60vh;
+            overflow-y: auto;
+        }
     </style>
 </head>
 
@@ -46,6 +52,7 @@
                     {% if request.user.is_authenticated %}
                         <li><a href="{% url 'user_detail' request.user.username %}" class="nav-link px-2 link-body-emphasis">Dashboard</a></li>
                         <li><a href="{% url 'actions' request.user.username %}" class="nav-link px-2 link-body-emphasis">Subscriptions</a></li>
+{#                        <li><a href="{% url 'messages' request.user.username %}" class="nav-link px-2 link-body-emphasis">Messages</a></li>#}
                     {% endif %}
                 </ul>
             

@@ -13,7 +13,7 @@
             <div class="col-md-4">
                 <div class="d-flex flex-column align-items-center p-3">
                     <div class="d-flex align-items-center justify-content-center">
-                    
+
                         <img id="preview" src="{% thumbnail user.profile.photo 200x200 crop="smart" %}" alt="Image" class="rounded-circle py-4">
 
                         <div class="p-4">
@@ -38,6 +38,9 @@
                                     </a>
                                 {% endif %}
                             </p>
+                            {% if request.user != user %}
+                                <a href="{% url 'messages' user.username %}">send message</a>
+                            {% endif %}
                         </div>
 
                     </div>

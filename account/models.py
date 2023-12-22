@@ -41,3 +41,23 @@ user_model.add_to_class('following',
                                                through=Contact,
                                                related_name='followers',
                                                symmetrical=False))
+
+
+class Message(models.Model):
+    sender = models.ForeignKey('auth.User',
+                               related_name='rel_sender_set',
+                               on_delete=models.CASCADE)
+    receiver = models.ForeignKey('auth.User',
+                                 related_name='rel_receiver_set',
+                                 on_delete=models.CASCADE)
+    message = models.TextField()
+    sent_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['sent_at'])
+        ]
+        ordering = ['sent_at']
+
+    def __str__(self):
+        return f'{self.sender} send message {self.receiver}'

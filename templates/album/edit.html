@@ -20,8 +20,7 @@
                                 {% csrf_token %}
                                 {% bootstrap_form form show_label=False %}
                                 {% bootstrap_form add_image_form show_label=False %}
-                                {% bootstrap_button "Save" button_type="submit" extra_classes='px-5' button_class="btn-outline-light" %}
-                                <a class="btn btn-outline-danger px-4" href="{% url 'album:album_delete' album.id %}" role="button">Delete</a>
+                                {% bootstrap_button "Save" button_type="submit" size='lg' extra_classes='px-5' button_class="btn-outline-light" %}
                             </form>
 
 

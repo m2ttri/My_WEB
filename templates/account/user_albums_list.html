@@ -32,6 +32,7 @@
                                                 <small class="fw-medium" style="text-decoration: none; color: #dc3545;">{{ album.get_status_display }}</small>
                                             {% endif %}
                                         </div>
+                                    
                                         <div class="d-flex justify-content-between">
                                             <small class="text-muted">{{ album.total_views }} view{{ album.total_views|pluralize }}</small>
                                             {% with album.comments.count as total_comments %}

@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Message
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -49,3 +49,12 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['photo']
+
+
+class MessageForm(forms.ModelForm):
+    message = forms.CharField(label='Write a message',
+                              widget=forms.Textarea(attrs={'rows': 3, 'cols': 12}))
+
+    class Meta:
+        model = Message
+        fields = ['message']

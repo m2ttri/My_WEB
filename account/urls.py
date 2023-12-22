@@ -11,4 +11,5 @@ urlpatterns = [
     path('user/follow/', views.user_follow, name='user_follow'),
     path('<username>/', views.user_detail, name='user_detail'),
     path('<username>/actions/', views.get_action, name='actions'),
+    path('<username>/messages/', views.send_message, name='messages'),
 ]
