@@ -11,6 +11,7 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('album/', include('album.urls', namespace='album')),
     path('social-auth/', include('social_django.urls', namespace='social')),
+    path('api/', include('album.api.urls', namespace='api')),
 ]
 
 if settings.DEBUG:

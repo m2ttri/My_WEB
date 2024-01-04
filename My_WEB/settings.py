@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'actions.apps.ActionsConfig',
     'django.contrib.humanize',
+    'rest_framework',
 ]
 
 
@@ -201,3 +202,10 @@ ABSOLUTE_URL_OVERRIDES = {
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 0
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
