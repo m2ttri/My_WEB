@@ -20,6 +20,7 @@ r = redis.Redis(host=settings.REDIS_HOST,
 
 
 def comment_form(request, album):
+    """Форма для добавления комментариев"""
     if request.method == 'POST':
         form = CommentForm(data=request.POST)
         if form.is_valid():
@@ -34,6 +35,7 @@ def comment_form(request, album):
 
 
 def album_detail(request, id):
+    """Детальное отображение альбома"""
     album = get_object_or_404(Album, id=id)
     images = album.images.all()
     total_views = r.incr(f'album:{album.id}:views')
@@ -73,6 +75,7 @@ def album_detail(request, id):
 
 @login_required
 def edit_album(request, id):
+    """Форма редактирования альбома"""
     album = get_object_or_404(Album, id=id)
     if request.method == "POST":
         form = AlbumEditForm(instance=album,
@@ -117,6 +120,7 @@ def album_like(request):
 
 @login_required()
 def create_album(request):
+    """Форма создания альбома"""
     if request.method == "POST":
         form = AlbumForm(request.POST)
         image_form = MultipleImageForm(request.POST,
@@ -140,6 +144,7 @@ def create_album(request):
 
 
 def album_search(request):
+    """Поиск по названию альбома"""
     form = SearchForm()
     query = None
     results = []
@@ -163,6 +168,7 @@ def album_search(request):
 
 
 def create_zip(album):
+    """Заархивировать альбом"""
     zip_file_name = f'{album.title.replace(" ", "_")}.zip'
     zip_file_path = os.path.join(settings.MEDIA_ROOT, zip_file_name)
     with zipfile.ZipFile(zip_file_path, 'w') as zipf:
@@ -173,6 +179,7 @@ def create_zip(album):
 
 
 def download_image(request, image_id):
+    """Скачать изображение"""
     img = Image.objects.get(id=image_id)
     response = FileResponse(open(img.image.path, 'rb'),
                             as_attachment=True)
@@ -180,6 +187,7 @@ def download_image(request, image_id):
 
 
 def download_album(request, album_id):
+    """Скачать альбом"""
     album = Album.objects.get(id=album_id)
     zip_file = create_zip(album)
     response = FileResponse(open(zip_file, 'rb'),
@@ -188,6 +196,7 @@ def download_album(request, album_id):
 
 
 class AlbumDeleteView(DeleteView):
+    """Удалить альбом"""
     model = Album
     template_name = "album/album_delete.html"
 
@@ -203,6 +212,7 @@ class AlbumDeleteView(DeleteView):
 
 
 class ImageDeleteView(DeleteView):
+    """Удалить изображение"""
     model = Image
 
     def get_success_url(self):
@@ -211,6 +221,7 @@ class ImageDeleteView(DeleteView):
 
 
 class CommentDeleteView(DeleteView):
+    """Удалить комментарий"""
     model = Comment
 
     def get_success_url(self):

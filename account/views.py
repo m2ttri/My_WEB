@@ -23,6 +23,7 @@ class CustomLoginView(LoginView):
 
 @login_required
 def send_message(request, username):
+    """Отправка сообщений между пользователями"""
     user = get_object_or_404(User,
                              username=username,
                              is_active=True)
@@ -44,6 +45,7 @@ def send_message(request, username):
 
 @login_required
 def get_action(request, username):
+    """Отслеживание действий пользователей"""
     user = get_object_or_404(User,
                              username=username,
                              is_active=True)
@@ -61,6 +63,7 @@ def get_action(request, username):
 
 
 def user_detail(request, username):
+    """Отображение страницы пользователя с созданными альбомами"""
     user = get_object_or_404(User,
                              username=username,
                              is_active=True)
@@ -88,6 +91,7 @@ def user_detail(request, username):
 
 
 def register(request):
+    """Регистрация пользователя"""
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
         if user_form.is_valid():
@@ -108,6 +112,7 @@ def register(request):
 
 @login_required
 def edit(request):
+    """Редактирование профиля"""
     if request.method == 'POST':
         user_form = UserEditForm(instance=request.user,
                                  data=request.POST)
@@ -131,6 +136,7 @@ def edit(request):
 @require_POST
 @login_required
 def user_follow(request):
+    """Подписка на пользователя"""
     user_id = request.POST.get('id')
     action = request.POST.get('action')
     if user_id and action:
