@@ -6,6 +6,7 @@ from album.views import r
 
 
 def index(request):
+    """Главная страница с бесконечной прокруткой и отображением 10 альбомов"""
     albums = Album.published.all()
     for album in albums:
         album.total_views = r.get(f'album:{album.id}:views').decode()
