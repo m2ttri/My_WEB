@@ -13,8 +13,7 @@
                                     <a href="{{ image.image.url }}">
                                         <img src="{% thumbnail image.image 200x200 crop="smart" %}" alt="Image" class="img-fluid tm-img">
                                     </a>
-
-                                    
+                                
                                     <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="border: none;">
                                         <i class="fa-solid fa-ellipsis"></i>
                                     </button>
@@ -50,12 +49,3 @@
         </div>
     </div>
 </div>
-
-{#                            <div style="display: flex; justify-content: end;">#}
-{#                                <form action="{% url 'album:image_download' image.id %}" method="post">#}
-{#                                    {% csrf_token %}#}
-{#                                    <button type="submit" href="{% url 'album:image_download' image.id %}" style="background: none; border: none;">#}
-{#                                        <i class="fa-solid fa-angle-down"></i>#}
-{#                                    </button>#}
-{#                                </form>#}
-{#                            </div>#}

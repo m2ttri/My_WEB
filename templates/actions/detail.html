@@ -29,7 +29,6 @@
                                                     <a class="fw-bold" href="{% url 'user_detail' user %}" style="text-decoration: none; color: #ffda6a">{{ user }}</a>
                                                     <span>{{ action.verb }}</span>
                                                 </p>
-
                                                 {% with target=action.target %}
                                                     <a class="ms-3" href="{% url 'album:album_detail' target.id %}" style="text-decoration: none">{{ target }}</a>
                                                 {% endwith %}
