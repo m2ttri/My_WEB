@@ -16,8 +16,10 @@ class ImageForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-    body = forms.CharField(label='Write a comment',
-                           widget=forms.Textarea(attrs={'rows': 4, 'cols': 15}))
+    body = forms.CharField(
+        label='Write a comment',
+        widget=forms.Textarea(attrs={'rows': 4, 'cols': 15})
+    )
 
     class Meta:
         model = Comment
@@ -49,10 +51,14 @@ class MultipleFileField(FileField):
 
 
 class MultipleImageForm(forms.Form):
-    images = MultipleFileField(widget=MultipleFileInput(attrs={'multiple': True}),
-                               required=False)
+    images = MultipleFileField(
+        widget=MultipleFileInput(attrs={'multiple': True}),
+        required=False
+    )
 
 
 class SearchForm(forms.Form):
-    query = forms.CharField(label='',
-                            widget=forms.TextInput(attrs={'placeholder': 'Search'}))
+    query = forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={'placeholder': 'Search'})
+    )

@@ -5,15 +5,21 @@ from .models import Profile, Message
 
 
 class CustomAuthenticationForm(AuthenticationForm):
-    username = UsernameField(label='Username or Email',
-                             widget=forms.TextInput(attrs={'autofocus': True}))
+    username = UsernameField(
+        label='Username or Email',
+        widget=forms.TextInput(attrs={'autofocus': True})
+    )
 
 
 class UserRegistrationForm(forms.ModelForm):
-    password = forms.CharField(label='Password',
-                               widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Repeat password',
-                                widget=forms.PasswordInput)
+    password = forms.CharField(
+        label='Password',
+        widget=forms.PasswordInput
+    )
+    password2 = forms.CharField(
+        label='Repeat password',
+        widget=forms.PasswordInput
+    )
 
     class Meta:
         model = User

@@ -24,10 +24,14 @@ class CustomLoginView(LoginView):
 @login_required
 def send_message(request, username):
     """Отправка сообщений между пользователями"""
-    user = get_object_or_404(User,
-                             username=username,
-                             is_active=True)
-    messages = Message.objects.filter(Q(sender=user, receiver=request.user) | Q(sender=request.user, receiver=user))
+    user = get_object_or_404(
+        User,
+        username=username,
+        is_active=True
+    )
+    messages = Message.objects.filter(
+        Q(sender=user, receiver=request.user) | Q(sender=request.user, receiver=user)
+    )
     if request.method == 'POST':
         form = MessageForm(request.POST)
         if form.is_valid():
@@ -38,35 +42,48 @@ def send_message(request, username):
             return redirect('messages', user)
     else:
         form = MessageForm()
-    return render(request,
-                  'account/message_form.html',
-                  {'form': form, 'user': user, 'messages': messages})
+    return render(
+        request,
+        'account/message_form.html',
+        {
+            'form': form,
+            'user': user,
+            'messages': messages
+        }
+    )
 
 
 @login_required
 def get_action(request, username):
     """Отслеживание действий пользователей"""
-    user = get_object_or_404(User,
-                             username=username,
-                             is_active=True)
+    user = get_object_or_404(
+        User,
+        username=username,
+        is_active=True
+    )
     if request.user.is_authenticated:
-        following_ids = request.user.following.values_list('id',
-                                                           flat=True)
-        actions = Action.objects.exclude(
-            user=request.user).filter(user_id__in=following_ids)
+        following_ids = request.user.following.values_list('id', flat=True)
+        actions = Action.objects.exclude(user=request.user).filter(user_id__in=following_ids)
         actions = actions.select_related('user', 'user__profile').prefetch_related('target')
     else:
         actions = Action.objects.none()
-    return render(request,
-                  'actions/detail.html',
-                  {'user': user, 'actions': actions})
+    return render(
+        request,
+        'actions/detail.html',
+        {
+            'user': user,
+            'actions': actions
+        }
+    )
 
 
 def user_detail(request, username):
     """Отображение страницы пользователя с созданными альбомами"""
-    user = get_object_or_404(User,
-                             username=username,
-                             is_active=True)
+    user = get_object_or_404(
+        User,
+        username=username,
+        is_active=True
+    )
     albums = Album.objects.filter(author=user).all()
     for album in albums:
         album.total_views = r.get(f'album:{album.id}:views').decode()
@@ -82,12 +99,22 @@ def user_detail(request, username):
             return HttpResponse('')
         albums = paginator.page(paginator.num_pages)
     if albums_only:
-        return render(request,
-                      'account/user_albums_list.html',
-                      {'user': user, 'albums': albums})
-    return render(request,
-                  'account/user_profile.html',
-                  {'user': user, 'albums': albums})
+        return render(
+            request,
+            'account/user_albums_list.html',
+            {
+                'user': user,
+                'albums': albums
+            }
+        )
+    return render(
+        request,
+        'account/user_profile.html',
+        {
+            'user': user,
+            'albums': albums
+        }
+    )
 
 
 def register(request):
@@ -105,20 +132,28 @@ def register(request):
             return redirect('edit')
     else:
         user_form = UserRegistrationForm()
-    return render(request,
-                  'account/register.html',
-                  {'user_form': user_form})
+    return render(
+        request,
+        'account/register.html',
+        {
+            'user_form': user_form
+        }
+    )
 
 
 @login_required
 def edit(request):
     """Редактирование профиля"""
     if request.method == 'POST':
-        user_form = UserEditForm(instance=request.user,
-                                 data=request.POST)
-        profile_form = ProfileEditForm(instance=request.user.profile,
-                                       data=request.POST,
-                                       files=request.FILES)
+        user_form = UserEditForm(
+            instance=request.user,
+            data=request.POST
+        )
+        profile_form = ProfileEditForm(
+            instance=request.user.profile,
+            data=request.POST,
+            files=request.FILES
+        )
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -127,10 +162,14 @@ def edit(request):
     else:
         user_form = UserEditForm(instance=request.user)
         profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(request,
-                  'account/edit.html',
-                  {'user_form': user_form,
-                   'profile_form': profile_form})
+    return render(
+        request,
+        'account/edit.html',
+        {
+            'user_form': user_form,
+            'profile_form': profile_form
+        }
+    )
 
 
 @require_POST
@@ -143,11 +182,9 @@ def user_follow(request):
         try:
             user = User.objects.get(id=user_id)
             if action == 'follow':
-                Contact.objects.get_or_create(
-                    user_from=request.user, user_to=user)
+                Contact.objects.get_or_create(user_from=request.user, user_to=user)
             else:
-                Contact.objects.filter(
-                    user_from=request.user, user_to=user).delete()
+                Contact.objects.filter(user_from=request.user, user_to=user).delete()
             return JsonResponse({'status': 'ok'})
         except User.DoesNotExist:
             return JsonResponse({'status': 'error'})

@@ -14,18 +14,24 @@ class Album(models.Model):
         PRIVATE = 'PR', 'Private'
         PUBLIC = 'PB', 'Public'
 
-    author = models.ForeignKey(settings.AUTH_USER_MODEL,
-                               related_name='album',
-                               on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='album',
+        on_delete=models.CASCADE
+    )
     title = models.CharField(max_length=18)
     publish = models.DateTimeField(default=timezone.now)
     update = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=2,
-                              choices=Status.choices,
-                              default=Status.PUBLIC)
-    users_like = models.ManyToManyField(settings.AUTH_USER_MODEL,
-                                        related_name='albums_liked',
-                                        blank=True)
+    status = models.CharField(
+        max_length=2,
+        choices=Status.choices,
+        default=Status.PUBLIC
+    )
+    users_like = models.ManyToManyField(
+        settings.AUTH_USER_MODEL,
+        related_name='albums_liked',
+        blank=True
+    )
     total_likes = models.PositiveIntegerField(default=0)
     objects = models.Manager()
     published = PublishedManager()
@@ -42,20 +48,26 @@ class Album(models.Model):
 
 
 class Image(models.Model):
-    album = models.ForeignKey(Album,
-                              related_name='images',
-                              on_delete=models.CASCADE)
+    album = models.ForeignKey(
+        Album,
+        related_name='images',
+        on_delete=models.CASCADE
+    )
     image = models.ImageField(upload_to='images/')
     add = models.DateTimeField(auto_now_add=True)
 
 
 class Comment(models.Model):
-    album = models.ForeignKey(Album,
-                              on_delete=models.CASCADE,
-                              related_name='comments')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
-                             related_name='comments',
-                             on_delete=models.CASCADE)
+    album = models.ForeignKey(
+        Album,
+        on_delete=models.CASCADE,
+        related_name='comments'
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name='comments',
+        on_delete=models.CASCADE
+    )
     body = models.TextField(blank=True)
     update = models.DateTimeField(auto_now=True)
 
